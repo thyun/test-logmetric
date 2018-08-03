@@ -1,0 +1,28 @@
+server:
+  port: 8080
+#logging:
+#  config: logback.xml
+
+---
+spring:
+  profiles: default
+name: hahaha
+my:
+   servers:
+       - dev.bar.com
+       - foo.bar.com
+input:
+  kafka:
+    zookeeper: "172.19.115.154:2181"
+    broker: "172.19.115.154:9092"
+    topics: "access_log"
+    groupId: "kafka-client"
+
+---
+spring:
+  profiles: production
+name: hahaha
+my:
+   servers:
+       - aaa.bar.com
+       - bbb.bar.com
