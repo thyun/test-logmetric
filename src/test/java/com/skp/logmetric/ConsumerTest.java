@@ -1,4 +1,4 @@
-package com.skp.testkafka;
+package com.skp.logmetric;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -16,7 +16,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.skp.testkafka.RunnableConsumer;
+import com.skp.logmetric.RunnableConsumer;
 import com.skp.testutil.ResourceHelper;
 import com.skp.testutil.ResourceHelper.LineReadCallback;
 
@@ -96,8 +96,8 @@ public class ConsumerTest {
 	 * Logmetric sample & pattern & output metric:
 	 * 10.202.212.58 - - [31/Jul/2018:17:48:29 +0900] "GET /assets/PMON_icon1-a6c18ea37d8809bb7521e9594e7e758e.png?20180528 HTTP/1.1" 200 2687 "http://pmon-dev.skplanet.com/hosts?f_field=hostname&f_service=&search=SMONi" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36" "0.010"
      *
-	 * %{WORD:ip} %{WORD:identd} %{WORD:userid} \[%{DATE:date}\] \"%{WORD} %{WORD:request} %{WORD}\" %{LONG:responseCode} %{LONG:byteSent} \"%{DATA:referer}\" \"%{DATA:client}\" \"%{DOUBLE:responseTime}\"(?:$|\s.*)
-	 * (\S+) (\S+) (\S+) \[(.+?)\] \"(\S+) (\S+) (\S+)\" (\d+) (\d+) "(.*?)" "(.*?)" "([\d\.]+)"(?:$|\s.*)
+	 * %{WORD:ip} %{WORD:identd} %{WORD:userid} \[%{DATE:date}\] "%{WORD} %{WORD:request} %{WORD}" %{LONG:responseCode} %{LONG:byteSent} "%{DATA:referer}" "%{DATA:client}" "%{DOUBLE:responseTime}"(?:$|\s.*)
+	 * (\S+) (\S+) (\S+) \[(.+?)\] "(\S+) (\S+) (\S+)" (\d+) (\d+) "(.*?)" "(.*?)" "([\d\.]+)"(?:$|\s.*)
 	 * 
 	 * {
 	 *   "type": "access",
@@ -118,7 +118,7 @@ public class ConsumerTest {
 	 */
 	@Test
 	public void testPattern() throws IOException {
-		ResourceHelper.processResource("com/skp/testkafka/access.log", new LineReadCallback() {
+		ResourceHelper.processResource("com/skp/logmetric/access.log", new LineReadCallback() {
 			@Override
 			public void processLine(String line) {
 				long count=0;
@@ -128,7 +128,7 @@ public class ConsumerTest {
 	}
 	
 	private void match(String line) {
-		String regex = "(\\S+) (\\S+) (\\S+) \\[(.+?)\\] \\\"(\\S+) (\\S+) (\\S+)\\\" (\\d+) (\\d+) \"(.*?)\" \"(.*?)\" \"([\\d\\.]+)\"(?:$|\\s.*)";
+		String regex = "(\\S+) (\\S+) (\\S+) \\[(.+?)\\] \"(\\S+) (\\S+) (\\S+)\" (\\d+) (\\d+) \"(.*?)\" \"(.*?)\" \"([\\d\\.]+)\"(?:$|\\s.*)";
 		Pattern pattern = Pattern.compile(regex);
 		Matcher m = pattern.matcher(line);
 		if (m.find()) {
@@ -136,7 +136,6 @@ public class ConsumerTest {
 					", 4=" + m.group(4) + ", 5=" + m.group(5) + ", 6=" + m.group(6) + ", 7=" + m.group(7));
 			logger.debug("8=" + m.group(8) + ", 9=" + m.group(9) + ", 10=" + m.group(10) + ", 11=" + m.group(11) + ", 12=" + m.group(12));
 		}
-		
 	}
 	
 }

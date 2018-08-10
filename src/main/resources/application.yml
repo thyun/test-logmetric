@@ -6,8 +6,8 @@ server:
 ---
 spring:
   profiles: default
-name: hahaha
-my:
+host: hahaha
+api:
    servers:
        - dev.bar.com
        - foo.bar.com
@@ -21,8 +21,8 @@ input:
 ---
 spring:
   profiles: production
-name: hahaha
-my:
+host: hahaha
+api:
    servers:
        - aaa.bar.com
        - bbb.bar.com
