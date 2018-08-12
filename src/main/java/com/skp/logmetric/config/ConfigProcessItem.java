@@ -12,5 +12,9 @@ public class ConfigProcessItem {
 
 	private void init() {		
 	}
+	
+	public void prepare() {
+		
+	}
 
 }

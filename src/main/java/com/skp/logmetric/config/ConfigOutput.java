@@ -20,4 +20,8 @@ public class ConfigOutput {
 		type = (String) j.get("type");
 		path = (String) j.get("path");
 	}
+
+	public void prepare() {
+		
+	}
 }

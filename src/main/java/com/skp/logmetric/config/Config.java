@@ -18,10 +18,12 @@ public class Config {
 	ConfigInput configInput;
 	ConfigProcess configProcess;
 	ConfigOutput configOutput;
+	String foo;
 	
-	public static Config parse(String value) throws ParseException {
+	public static Config create(String value) throws ParseException {
 		Config config = new Config();
 		config.init(value);
+		config.prepare();
 		return config;
 	}
 	
@@ -36,24 +38,15 @@ public class Config {
 	private void init(JSONObject j) {
 		this.j = j;
 		
-		initInput((JSONObject) j.get("input"));
-		initProcess((JSONArray) j.get("process"));
-		initOutput((JSONObject) j.get("output"));
+		configInput = new ConfigInput((JSONObject) j.get("input"));
+		configProcess = new ConfigProcess((JSONArray) j.get("process"));
+		configOutput = new ConfigOutput((JSONObject) j.get("output"));
 	}
 
-	private void initInput(JSONObject j) {
-		configInput = new ConfigInput(j);
-		
-	}
-	
-	private void initProcess(JSONArray j) {
-		configProcess = new ConfigProcess(j);
-		
-	}
-
-	private void initOutput(JSONObject j) {
-		configOutput = new ConfigOutput(j);
-		
+	public void prepare() {
+		configInput.prepare();
+		configProcess.prepare();
+		configOutput.prepare();
 	}
 
 }

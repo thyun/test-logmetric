@@ -11,12 +11,19 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.MockConsumer;
 import org.apache.kafka.clients.consumer.OffsetResetStrategy;
 import org.apache.kafka.common.TopicPartition;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.skp.logmetric.RunnableConsumer;
+import com.skp.logmetric.config.Config;
+import com.skp.logmetric.config.ConfigProcess;
+import com.skp.logmetric.config.ConfigProcessItem;
+import com.skp.logmetric.config.ConfigProcessMatch;
+import com.skp.logmetric.config.TypeField;
 import com.skp.testutil.ResourceHelper;
 import com.skp.testutil.ResourceHelper.LineReadCallback;
 
@@ -101,6 +108,7 @@ public class ConsumerTest {
 	 * 
 	 * {
 	 *   "type": "access",
+	 *   "host": "test.com",
 	 *   "count": 10,
 	 *   "responseCode.sum": 10000,
 	 *   "responseCode.min": 1000,
@@ -117,25 +125,61 @@ public class ConsumerTest {
 	 * }
 	 */
 	@Test
-	public void testPattern() throws IOException {
+	public void testPattern() throws IOException, ParseException {
+		String input = ResourceHelper.getResourceString("process.conf");
+		Config config = Config.create(input);
+		
 		ResourceHelper.processResource("com/skp/logmetric/access.log", new LineReadCallback() {
 			@Override
 			public void processLine(String line) {
 				long count=0;
-				match(line);
-			} 
+				process(config, line);
+			}
 		});
 	}
-	
-	private void match(String line) {
-		String regex = "(\\S+) (\\S+) (\\S+) \\[(.+?)\\] \"(\\S+) (\\S+) (\\S+)\" (\\d+) (\\d+) \"(.*?)\" \"(.*?)\" \"([\\d\\.]+)\"(?:$|\\s.*)";
+
+	private void process(Config config, String line) {
+		JSONObject log = new JSONObject();
+		
+		ConfigProcess configProcess = config.getConfigProcess();
+		List<ConfigProcessItem> configProcessList = configProcess.getConfigProcessList();
+		for (int i=0; i<configProcessList.size(); i++) {
+			ConfigProcessItem item = configProcessList.get(i);
+			if (item instanceof ConfigProcessMatch)
+				processMatch((ConfigProcessMatch) item, line, log);
+		}
+		
+	}
+
+	private void processMatch(ConfigProcessMatch config, String line, JSONObject log) {
+		String regex = config.getPatternRegex();
 		Pattern pattern = Pattern.compile(regex);
 		Matcher m = pattern.matcher(line);
-		if (m.find()) {
-			logger.debug("1=" + m.group(1) + ", 2=" + m.group(2) + ", 3=" + m.group(3) +
-					", 4=" + m.group(4) + ", 5=" + m.group(5) + ", 6=" + m.group(6) + ", 7=" + m.group(7));
-			logger.debug("8=" + m.group(8) + ", 9=" + m.group(9) + ", 10=" + m.group(10) + ", 11=" + m.group(11) + ", 12=" + m.group(12));
+		if (!m.find()) {
+			logger.error("Process match fail: line=" + line);
+			return;
 		}
+
+		StringBuffer sb = new StringBuffer();
+		sb.append("Process match ");
+		List<TypeField> typeFieldList = config.getTypeFieldList();
+		for (int i=0; i<typeFieldList.size(); i++) {
+			TypeField tf = typeFieldList.get(i);
+			int pos = tf.getPos();
+			String type = tf.getType();
+			String value = m.group(pos);
+			if (tf.getField() != null) {
+				if (TypeField.KEY_LONG.equals(type))
+					log.put(tf.getField(), Long.parseLong(value));
+				else if (TypeField.KEY_DOUBLE.equals(type))
+					log.put(tf.getField(), Double.parseDouble(value));
+				else
+					log.put(tf.getField(), value);
+			}
+			sb.append(" " + pos + "=" + m.group(pos));
+		}
+//		logger.debug(sb.toString());
+		logger.debug(log.toString());
 	}
 	
 }

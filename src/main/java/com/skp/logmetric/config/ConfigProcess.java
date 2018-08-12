@@ -42,4 +42,11 @@ public class ConfigProcess {
 		}
 		return null;
 	}
+
+	public void prepare() {
+		for (int i=0; i<configProcessList.size(); i++) {
+			ConfigProcessItem item = (ConfigProcessItem) configProcessList.get(i);
+			item.prepare();
+		}
+	}
 }

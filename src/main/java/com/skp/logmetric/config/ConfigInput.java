@@ -20,6 +20,10 @@ public class ConfigInput {
 		type = (String) j.get("type");
 		topic = (String) j.get("topic");
 	}
+
+	public void prepare() {
+		
+	}
 	
 
 }

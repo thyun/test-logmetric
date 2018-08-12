@@ -19,4 +19,7 @@ public class ConfigProcessMetrics extends ConfigProcessItem {
 		type = (String) j.get("type");
 	}
 
+	public void prepare() {
+		
+	}
 }
