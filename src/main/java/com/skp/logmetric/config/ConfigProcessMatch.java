@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +19,7 @@ public class ConfigProcessMatch extends ConfigProcessItem {
 	String field;
 	String pattern;
 	String patternRegex;
-	ArrayList typeFieldList = new ArrayList<TypeField>();
+	ArrayList<TypeField> typeFieldList = new ArrayList<>();
 
 	public ConfigProcessMatch(JSONObject j) {
 		this.j = j;

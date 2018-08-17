@@ -11,14 +11,14 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.MockConsumer;
 import org.apache.kafka.clients.consumer.OffsetResetStrategy;
 import org.apache.kafka.common.TopicPartition;
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.skp.logmetric.RunnableConsumer;
+import com.skp.logmetric.GeneralConsumer;
 import com.skp.logmetric.config.Config;
 import com.skp.logmetric.config.ConfigProcess;
 import com.skp.logmetric.config.ConfigProcessItem;
@@ -40,7 +40,7 @@ public class ConsumerTest {
 	public void testConsumer() throws IOException {
 	    // Setup consumer
 		String topic = "my_topic";
-	    RunnableConsumer runnableConsumer = new RunnableConsumer(1, consumer);
+	    GeneralConsumer runnableConsumer = new GeneralConsumer(1, consumer);
 	    runnableConsumer.assign(Arrays.asList(new TopicPartition(topic, 0)));
 	    
 	    // Set topic offset
@@ -64,13 +64,11 @@ public class ConsumerTest {
 	    runnableConsumer.consume();
 	}
 	
-	/*
-	*/
 	@Test
-	public void testConsumerAccessLog() throws IOException {
+	public void testConsumerAccessLogPlain() throws IOException {
 	    // Setup consumer
 		String topic = "my_topic";
-	    RunnableConsumer runnableConsumer = new RunnableConsumer(1, consumer);
+	    GeneralConsumer runnableConsumer = new GeneralConsumer(1, consumer);
 	    runnableConsumer.assign(Arrays.asList(new TopicPartition(topic, 0)));
 	    
 	    // Set topic offset
@@ -79,7 +77,7 @@ public class ConsumerTest {
 	    consumer.updateBeginningOffsets(beginningOffsets);
 
 	    // Create record
-		ResourceHelper.processResource("com/skp/testkafka/access.log", new LineReadCallback() {
+		ResourceHelper.processResource("com/skp/logmetric/access.log", new LineReadCallback() {
 			@Override
 			public void processLine(String line) {
 				long count=0;
@@ -91,6 +89,41 @@ public class ConsumerTest {
 	    // Consume
 	    runnableConsumer.consume();
 	}
+	
+	@Test
+	public void testConsumerAccessLogJson() throws IOException {
+	    // Setup consumer
+		String topic = "my_topic";
+	    GeneralConsumer runnableConsumer = new GeneralConsumer(1, consumer);
+	    runnableConsumer.assign(Arrays.asList(new TopicPartition(topic, 0)));
+	    
+	    // Set topic offset
+	    HashMap<TopicPartition, Long> beginningOffsets = new HashMap<>();
+	    beginningOffsets.put(new TopicPartition(topic, 0), 0L);
+	    consumer.updateBeginningOffsets(beginningOffsets);
+
+	    // Create record
+		ResourceHelper.processResource("com/skp/logmetric/access.log", new LineReadCallback() {
+			@Override
+			public void processLine(String line) {
+				long count=0;
+				consumer.addRecord(new ConsumerRecord<String, String>("my_topic", 0, 
+	    				count++, "mykey", produceJson(line)));
+			}
+
+		});
+
+	    // Consume
+	    runnableConsumer.consume();
+	}
+	
+	private String produceJson(String line) {
+		JSONObject j = new JSONObject();
+		j.put("host", "web01");
+//		j.put("@timestamp", value);
+		j.put("log",  line);
+		return j.toString();
+	} 
 	
 	/*
 	 * Logstash grok pattern: (https://github.com/elastic/logstash/blob/v1.4.2/patterns/grok-patterns)
@@ -125,8 +158,32 @@ public class ConsumerTest {
 	 * }
 	 */
 	@Test
-	public void testPattern() throws IOException, ParseException {
-		String input = ResourceHelper.getResourceString("process.conf");
+	public void testProcess() throws IOException, ParseException {
+	    // Setup consumer
+		String topic = "my_topic";
+	    GeneralConsumer runnableConsumer = new GeneralConsumer(1, consumer);
+	    runnableConsumer.assign(Arrays.asList(new TopicPartition(topic, 0)));
+	    
+	    // Set topic offset
+	    HashMap<TopicPartition, Long> beginningOffsets = new HashMap<>();
+	    beginningOffsets.put(new TopicPartition(topic, 0), 0L);
+	    consumer.updateBeginningOffsets(beginningOffsets);
+
+	    // Create record
+		ResourceHelper.processResource("com/skp/logmetric/access.log", new LineReadCallback() {
+			@Override
+			public void processLine(String line) {
+				long count=0;
+				consumer.addRecord(new ConsumerRecord<String, String>("my_topic", 0, 
+	    				count++, "mykey", produceJson(line)));
+			}
+
+		});
+
+	    // Consume
+	    runnableConsumer.consume();
+		
+/*		String input = ResourceHelper.getResourceString("process.conf");
 		Config config = Config.create(input);
 		
 		ResourceHelper.processResource("com/skp/logmetric/access.log", new LineReadCallback() {
@@ -135,7 +192,7 @@ public class ConsumerTest {
 				long count=0;
 				process(config, line);
 			}
-		});
+		}); */
 	}
 
 	private void process(Config config, String line) {
@@ -143,11 +200,15 @@ public class ConsumerTest {
 		
 		ConfigProcess configProcess = config.getConfigProcess();
 		List<ConfigProcessItem> configProcessList = configProcess.getConfigProcessList();
-		for (int i=0; i<configProcessList.size(); i++) {
-			ConfigProcessItem item = configProcessList.get(i);
+		for (ConfigProcessItem item : configProcessList) {
 			if (item instanceof ConfigProcessMatch)
 				processMatch((ConfigProcessMatch) item, line, log);
 		}
+/*		for (int i=0; i<configProcessList.size(); i++) {
+			ConfigProcessItem item = configProcessList.get(i);
+			if (item instanceof ConfigProcessMatch)
+				processMatch((ConfigProcessMatch) item, line, log);
+		} */
 		
 	}
 
@@ -163,8 +224,7 @@ public class ConsumerTest {
 		StringBuffer sb = new StringBuffer();
 		sb.append("Process match ");
 		List<TypeField> typeFieldList = config.getTypeFieldList();
-		for (int i=0; i<typeFieldList.size(); i++) {
-			TypeField tf = typeFieldList.get(i);
+		for (TypeField tf : typeFieldList) {
 			int pos = tf.getPos();
 			String type = tf.getType();
 			String value = m.group(pos);
@@ -178,6 +238,21 @@ public class ConsumerTest {
 			}
 			sb.append(" " + pos + "=" + m.group(pos));
 		}
+/*		for (int i=0; i<typeFieldList.size(); i++) {
+			TypeField tf = typeFieldList.get(i);
+			int pos = tf.getPos();
+			String type = tf.getType();
+			String value = m.group(pos);
+			if (tf.getField() != null) {
+				if (TypeField.KEY_LONG.equals(type))
+					log.put(tf.getField(), Long.parseLong(value));
+				else if (TypeField.KEY_DOUBLE.equals(type))
+					log.put(tf.getField(), Double.parseDouble(value));
+				else
+					log.put(tf.getField(), value);
+			}
+			sb.append(" " + pos + "=" + m.group(pos));
+		} */
 //		logger.debug(sb.toString());
 		logger.debug(log.toString());
 	}

@@ -1,6 +1,6 @@
 package com.skp.logmetric.config;
 
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 
 public class ConfigProcessItem {
 	JSONObject j;

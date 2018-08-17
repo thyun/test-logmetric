@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +20,8 @@ public class ConfigTest {
 	public void setUp() {
 	}
 	
+	// pattern=%{WORD:ip} %{WORD:identd} %{WORD:userid} \[%{DATE:date}\] "%{WORD} %{WORD:request} %{WORD}" %{LONG:responseCode} %{LONG:byteSent} "%{DATA:referer}" "%{DATA:client}" "%{DOUBLE:responseTime}"(?:$|\s.*)
+	// patternRegex=(\S+) (\S+) (\S+) \[(.+?)\] "(\S+) (\S+) (\S+)" (\d+) (\d+) "(.*?)" "(.*?)" "([\d\.]+)"(?:$|\s.*)
 	@Test
 	public void testConfig() throws IOException, ParseException {
 		String input = ResourceHelper.getResourceString("process.conf");
@@ -29,7 +29,6 @@ public class ConfigTest {
 		
 		List<ConfigProcessItem> configProcessItemList = config.getConfigProcess().getConfigProcessList();
 		ConfigProcessMatch configProcessMatch = (ConfigProcessMatch) configProcessItemList.get(0);
-		String pattern = configProcessMatch.getPattern();
 		logger.debug("pattern=" + configProcessMatch.getPattern());
 		logger.debug("patternRegex=" + configProcessMatch.getPatternRegex());
 	} 

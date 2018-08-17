@@ -16,8 +16,8 @@ import org.slf4j.LoggerFactory;
 /*
  * https://www.confluent.io/blog/tutorial-getting-started-with-the-new-apache-kafka-0-9-consumer-client/
  */
-public class MainKafkaNewConsumer {
-	private static final Logger logger = LoggerFactory.getLogger(MainKafkaNewConsumer.class);
+public class MainKafkaNewTopicConsumer {
+	private static final Logger logger = LoggerFactory.getLogger(MainKafkaNewTopicConsumer.class);
 	
 //    private  ExecutorService executor;
     
@@ -36,20 +36,21 @@ public class MainKafkaNewConsumer {
         List<String> topics = Arrays.asList(topic);		// Arrays.asList("foo", "bar");
         ExecutorService executor = Executors.newFixedThreadPool(numConsumers);
 
-        final List<RunnableConsumer> runnableConsumers = new ArrayList<>();
+        final List<GeneralConsumer> consumerList = new ArrayList<>();
         for (int i = 0; i < numConsumers; i++) {
-        	KafkaConsumer<String, String> consumer = createConsumer(broker, groupId);
-            RunnableConsumer runnableConsumer = new RunnableConsumer(i, consumer);
-            runnableConsumer.subscribe(topics);
-            executor.submit(runnableConsumer);
-
-            runnableConsumers.add(runnableConsumer);
+        	GeneralConsumer consumer = GeneralConsumer.createConsumer(i, broker, groupId);
+//        	KafkaConsumer<String, String> kafkaConsumer = GeneralConsumer.createKafkaConsumer(broker, groupId);
+//            GeneralConsumer consumer = new GeneralConsumer(i, kafkaConsumer);
+            consumerList.add(consumer);
+        	
+            consumer.subscribe(topics);
+            executor.submit(consumer);
         }
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
           @Override
           public void run() {
-            for (RunnableConsumer consumer : runnableConsumers) {
+            for (GeneralConsumer consumer : consumerList) {
               consumer.shutdown();
             } 
             executor.shutdown();
@@ -68,15 +69,5 @@ public class MainKafkaNewConsumer {
 		System.out.println("java -jar kafka-new-consumer.jar {broker} {groupId} {topic} {numConsumer}");
 		System.out.println("ex) java -jar kafka-new-consumer.jar localhost:9092 mygroup access_log 3");
 	}
-    
-    private static KafkaConsumer<String, String> createConsumer(String broker, String groupId) {
-		Properties props = new Properties();
-		props.put("bootstrap.servers", broker);
-		props.put("group.id", groupId);
-		props.put("key.deserializer", StringDeserializer.class.getName());
-		props.put("value.deserializer", StringDeserializer.class.getName());
-		props.put("session.timeout.ms", "30000");
-		return new KafkaConsumer<>(props);
-    }
     
 }

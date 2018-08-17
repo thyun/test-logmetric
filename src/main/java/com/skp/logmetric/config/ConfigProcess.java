@@ -3,8 +3,8 @@ package com.skp.logmetric.config;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +24,7 @@ public class ConfigProcess {
 	}
 
 	private void init() {
-		for (int i=0; i<ja.size(); i++) {
+		for (int i=0; i<ja.length(); i++) {
 			JSONObject j = (JSONObject) ja.get(i);
 			ConfigProcessItem item = createConfigProcessItem(j);
 			if (item != null)
@@ -44,9 +44,12 @@ public class ConfigProcess {
 	}
 
 	public void prepare() {
-		for (int i=0; i<configProcessList.size(); i++) {
-			ConfigProcessItem item = (ConfigProcessItem) configProcessList.get(i);
+		for (ConfigProcessItem item : configProcessList) {
 			item.prepare();
 		}
+/*		for (int i=0; i<configProcessList.size(); i++) {
+			ConfigProcessItem item = (ConfigProcessItem) configProcessList.get(i);
+			item.prepare();
+		} */
 	}
 }

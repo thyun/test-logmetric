@@ -1,14 +1,9 @@
 package com.skp.logmetric.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
-import com.skp.testutil.ResourceHelper;
 
 import lombok.Data;
 
@@ -28,9 +23,9 @@ public class Config {
 	}
 	
 	private void init(String value) throws ParseException {
-		
-		JSONParser parser = new JSONParser();
-		JSONObject j = (JSONObject) parser.parse(value);
+		JSONObject j = new JSONObject(value);
+//		JSONParser parser = new JSONParser();
+//		JSONObject j = (JSONObject) parser.parse(value);
 		j.put("pattern", "%{WORD:ip} %{WORD:identd} %{WORD:userid} \\[%{DATE:date}\\] \\\"%{WORD} %{WORD:request} %{WORD}\\\" %{LONG:responseCode} %{LONG:byteSent} \\\"%{DATA:referer}\\\" \\\"%{DATA:client}\\\" \\\"%{DOUBLE:responseTime}\\\"(?:$|\\s.*)");
 		init(j);
 	}

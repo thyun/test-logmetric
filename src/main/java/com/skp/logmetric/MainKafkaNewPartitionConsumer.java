@@ -33,9 +33,9 @@ public class MainKafkaNewPartitionConsumer {
         
         ExecutorService executor = Executors.newFixedThreadPool(numConsumers);
 
-        final List<PartitionConsumerLoop> consumers = new ArrayList<>();
+        final List<PartitionConsumer> consumers = new ArrayList<>();
         for (int i = 0; i < numConsumers; i++) {
-          PartitionConsumerLoop consumer = new PartitionConsumerLoop(i, broker, groupId, topic, partition);
+          PartitionConsumer consumer = new PartitionConsumer(i, broker, groupId, topic, partition);
           consumers.add(consumer);
           executor.submit(consumer);
         }
@@ -43,7 +43,7 @@ public class MainKafkaNewPartitionConsumer {
         Runtime.getRuntime().addShutdownHook(new Thread() {
           @Override
           public void run() {
-            for (PartitionConsumerLoop consumer : consumers) {
+            for (PartitionConsumer consumer : consumers) {
               consumer.shutdown();
             } 
             executor.shutdown();

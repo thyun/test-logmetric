@@ -15,13 +15,13 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
-public class PartitionConsumerLoop implements Runnable {
+public class PartitionConsumer implements Runnable {
 	private final KafkaConsumer<String, String> consumer;
 	private final List<TopicPartition> topicPartitions;
 	private final List<String> topics;
 	private final int id;
 
-	public PartitionConsumerLoop(int id,
+	public PartitionConsumer(int id,
 			String broker,
 			String groupId, 
 			String topic,
