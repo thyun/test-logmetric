@@ -3,21 +3,18 @@ package com.skp.logmetric;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /*
  * https://www.confluent.io/blog/tutorial-getting-started-with-the-new-apache-kafka-0-9-consumer-client/
  */
-public class MainKafkaNewTopicConsumer {
-	private static final Logger logger = LoggerFactory.getLogger(MainKafkaNewTopicConsumer.class);
+public class MainKafkaNewPartitionConsumerOld {
+	private static final Logger logger = LoggerFactory.getLogger(MainKafkaNewPartitionConsumerOld.class);
 	
 //    private  ExecutorService executor;
     
@@ -31,24 +28,22 @@ public class MainKafkaNewTopicConsumer {
         String broker = args[0];
         String groupId = args[1];
         String topic = args[2];
-        int numConsumers = Integer.parseInt(args[3]);
+        int partition = Integer.parseInt(args[3]);
+        int numConsumers = 1;
         
-        List<String> topics = Arrays.asList(topic);		// Arrays.asList("foo", "bar");
         ExecutorService executor = Executors.newFixedThreadPool(numConsumers);
 
-        final List<GeneralConsumer> consumerList = new ArrayList<>();
+        final List<PartitionConsumerOld> consumers = new ArrayList<>();
         for (int i = 0; i < numConsumers; i++) {
-        	GeneralConsumer consumer = GeneralConsumer.createConsumer(i, broker, groupId);
-            consumerList.add(consumer);
-        	
-            consumer.subscribe(topics);
-            executor.submit(consumer);
+          PartitionConsumerOld consumer = new PartitionConsumerOld(i, broker, groupId, topic, partition);
+          consumers.add(consumer);
+          executor.submit(consumer);
         }
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
           @Override
           public void run() {
-            for (GeneralConsumer consumer : consumerList) {
+            for (PartitionConsumerOld consumer : consumers) {
               consumer.shutdown();
             } 
             executor.shutdown();
@@ -64,8 +59,8 @@ public class MainKafkaNewTopicConsumer {
     
     private static void printHelp() {
 		System.out.println("Usage:");
-		System.out.println("java -jar kafka-new-consumer.jar {broker} {groupId} {topic} {numConsumer}");
-		System.out.println("ex) java -jar kafka-new-consumer.jar localhost:9092 mygroup access_log 3");
+		System.out.println("java -jar kafka-new-partition-consumer.jar {broker} {groupId} {topic} {partition}");
+		System.out.println("ex) java -jar kafka-new-partition-consumer.jar localhost:9092 mygroup access_log 3");
 	}
     
 }

@@ -1,5 +1,6 @@
 package com.skp.logmetric;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,7 @@ import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -23,7 +25,12 @@ public class GeneralConsumer implements Runnable {
 		this.consumer = consumer;
 	}
 	
-    public static KafkaConsumer<String, String> createKafkaConsumer(String broker, String groupId) {
+    public static GeneralConsumer createConsumer(int id, String broker, String groupId) {
+    	KafkaConsumer<String, String> kafkaConsumer = GeneralConsumer.createKafkaConsumer(broker, groupId);
+        return new GeneralConsumer(id, kafkaConsumer);
+    }
+	
+    private static KafkaConsumer<String, String> createKafkaConsumer(String broker, String groupId) {
 		Properties props = new Properties();
 		props.put("bootstrap.servers", broker);
 		props.put("group.id", groupId);
@@ -33,17 +40,25 @@ public class GeneralConsumer implements Runnable {
 		return new KafkaConsumer<>(props);
     }
     
-    public static GeneralConsumer createConsumer(int id, String broker, String groupId) {
-    	KafkaConsumer<String, String> kafkaConsumer = GeneralConsumer.createKafkaConsumer(broker, groupId);
-        return new GeneralConsumer(id, kafkaConsumer);
-    }
-	
 	public void subscribe(List<String> topics) {
 		consumer.subscribe(topics);
 	}
 	
-	public void assign(List<TopicPartition> partitions) {
-	    consumer.assign(partitions);
+	public void assign(String topic, List<Integer> partitions) {
+		List<TopicPartition> topicPartitions;
+		
+		topicPartitions = new ArrayList<>();
+		for (Integer partition : partitions) {
+			topicPartitions.add(new TopicPartition(topic, partition));
+		}
+/*		for (PartitionInfo partitionInfo : consumer.partitionsFor(topic)) {
+			System.out.println("partitionInfo partition=" + partitionInfo.partition());
+			for (Integer partition : partitions) {
+				if (partitionInfo.partition() == partition)
+					topicPartitions.add(new TopicPartition(topic, partitionInfo.partition()));
+			}
+		} */
+	    consumer.assign(topicPartitions);
 	}
 
 	@Override

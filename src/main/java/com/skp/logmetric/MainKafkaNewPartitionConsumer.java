@@ -31,19 +31,22 @@ public class MainKafkaNewPartitionConsumer {
         int partition = Integer.parseInt(args[3]);
         int numConsumers = 1;
         
+        List<Integer> partitions = Arrays.asList(partition);
         ExecutorService executor = Executors.newFixedThreadPool(numConsumers);
 
-        final List<PartitionConsumer> consumers = new ArrayList<>();
+        final List<GeneralConsumer> consumerList = new ArrayList<>();
         for (int i = 0; i < numConsumers; i++) {
-          PartitionConsumer consumer = new PartitionConsumer(i, broker, groupId, topic, partition);
-          consumers.add(consumer);
+          GeneralConsumer consumer = GeneralConsumer.createConsumer(i, broker, groupId);
+          consumerList.add(consumer);
+          
+          consumer.assign(topic, partitions);
           executor.submit(consumer);
         }
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
           @Override
           public void run() {
-            for (PartitionConsumer consumer : consumers) {
+            for (GeneralConsumer consumer : consumerList) {
               consumer.shutdown();
             } 
             executor.shutdown();

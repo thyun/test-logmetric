@@ -30,6 +30,7 @@ import com.skp.testutil.ResourceHelper.LineReadCallback;
 public class ConsumerTest {
 	private static final Logger logger = LoggerFactory.getLogger(ConsumerTest.class);
 	MockConsumer<String, String> consumer;
+	long offset;
 	
 	@Before
 	public void setUp() {
@@ -41,7 +42,7 @@ public class ConsumerTest {
 	    // Setup consumer
 		String topic = "my_topic";
 	    GeneralConsumer runnableConsumer = new GeneralConsumer(1, consumer);
-	    runnableConsumer.assign(Arrays.asList(new TopicPartition(topic, 0)));
+	    runnableConsumer.assign(topic, Arrays.asList(0));
 	    
 	    // Set topic offset
 	    HashMap<TopicPartition, Long> beginningOffsets = new HashMap<>();
@@ -69,7 +70,7 @@ public class ConsumerTest {
 	    // Setup consumer
 		String topic = "my_topic";
 	    GeneralConsumer runnableConsumer = new GeneralConsumer(1, consumer);
-	    runnableConsumer.assign(Arrays.asList(new TopicPartition(topic, 0)));
+	    runnableConsumer.assign(topic, Arrays.asList(0));
 	    
 	    // Set topic offset
 	    HashMap<TopicPartition, Long> beginningOffsets = new HashMap<>();
@@ -77,12 +78,12 @@ public class ConsumerTest {
 	    consumer.updateBeginningOffsets(beginningOffsets);
 
 	    // Create record
+	    offset = 0;
 		ResourceHelper.processResource("com/skp/logmetric/access.log", new LineReadCallback() {
 			@Override
 			public void processLine(String line) {
-				long count=0;
 				consumer.addRecord(new ConsumerRecord<String, String>("my_topic", 0, 
-	    				count++, "mykey", line));
+	    				offset++, "mykey", line));
 			} 
 		});
 
@@ -95,7 +96,7 @@ public class ConsumerTest {
 	    // Setup consumer
 		String topic = "my_topic";
 	    GeneralConsumer runnableConsumer = new GeneralConsumer(1, consumer);
-	    runnableConsumer.assign(Arrays.asList(new TopicPartition(topic, 0)));
+	    runnableConsumer.assign(topic, Arrays.asList(0));
 	    
 	    // Set topic offset
 	    HashMap<TopicPartition, Long> beginningOffsets = new HashMap<>();
@@ -103,12 +104,12 @@ public class ConsumerTest {
 	    consumer.updateBeginningOffsets(beginningOffsets);
 
 	    // Create record
+	    offset = 0;
 		ResourceHelper.processResource("com/skp/logmetric/access.log", new LineReadCallback() {
 			@Override
 			public void processLine(String line) {
-				long count=0;
-				consumer.addRecord(new ConsumerRecord<String, String>("my_topic", 0, 
-	    				count++, "mykey", produceJson(line)));
+				consumer.addRecord(new ConsumerRecord<String, String>(topic, 0, 
+	    				offset++, "mykey", produceJson(line)));
 			}
 
 		});
@@ -162,7 +163,7 @@ public class ConsumerTest {
 	    // Setup consumer
 		String topic = "my_topic";
 	    GeneralConsumer runnableConsumer = new GeneralConsumer(1, consumer);
-	    runnableConsumer.assign(Arrays.asList(new TopicPartition(topic, 0)));
+	    runnableConsumer.assign(topic, Arrays.asList(0));
 	    
 	    // Set topic offset
 	    HashMap<TopicPartition, Long> beginningOffsets = new HashMap<>();
@@ -170,12 +171,12 @@ public class ConsumerTest {
 	    consumer.updateBeginningOffsets(beginningOffsets);
 
 	    // Create record
+	    offset = 0;
 		ResourceHelper.processResource("com/skp/logmetric/access.log", new LineReadCallback() {
 			@Override
 			public void processLine(String line) {
-				long count=0;
 				consumer.addRecord(new ConsumerRecord<String, String>("my_topic", 0, 
-	    				count++, "mykey", produceJson(line)));
+	    				offset++, "mykey", produceJson(line)));
 			}
 
 		});
