@@ -1,10 +1,13 @@
 package com.skp.logmetric.consumer;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -13,22 +16,47 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.skp.logmetric.ConsumerTest;
+import com.skp.logmetric.config.Config;
+import com.skp.logmetric.config.ConfigProcess;
+import com.skp.logmetric.config.ConfigProcessItem;
+import com.skp.logmetric.config.ConfigProcessMatch;
+import com.skp.logmetric.config.ConfigProcessMetrics;
+import com.skp.logmetric.config.TypeField;
+import com.skp.logmetric.datastore.MetricEventDatastore;
+import com.skp.logmetric.event.LogEvent;
+import com.skp.logmetric.event.MetricEvent;
 
 public class LogConsumer implements Runnable {
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	
 	private final int id;
 	private final Consumer<String, String> consumer;
+	private final Config config;
 	
-	public LogConsumer(int id, Consumer<String, String> consumer) {
+	public LogConsumer(int id, Consumer<String, String> consumer, Config config) {
 		this.id = id;
 		this.consumer = consumer;
+		this.config = config;
 	}
 	
 	public void subscribe(List<String> topics) {
 		consumer.subscribe(topics);
 	}
 	
-	public void assign(List<TopicPartition> partitions) {
-	    consumer.assign(partitions);
+	public void assign(String topic, List<Integer> partitions) {
+		List<TopicPartition> topicPartitions;
+		
+		topicPartitions = new ArrayList<>();
+		for (Integer partition : partitions) {
+			topicPartitions.add(new TopicPartition(topic, partition));
+		}
+	    consumer.assign(topicPartitions);
 	}
 
 	@Override
@@ -36,13 +64,7 @@ public class LogConsumer implements Runnable {
 		try {
 			while (true) {
 				ConsumerRecords<String, String> records = consumer.poll(Long.MAX_VALUE);
-				for (ConsumerRecord<String, String> record : records) {
-					Map<String, Object> data = new HashMap<>();
-					data.put("partition", record.partition());
-					data.put("offset", record.offset());
-					data.put("value", record.value());
-					System.out.println(this.id + ": " + data);
-				}
+				process(records);
 			}
 		} catch (WakeupException e) {
 			// ignore for shutdown 
@@ -55,11 +77,88 @@ public class LogConsumer implements Runnable {
 		consumer.wakeup();
 	}
 	
+	// Used for test
 	public void consume() {
 		ConsumerRecords<String, String> records = consumer.poll(Long.MAX_VALUE);
+		process(records);
+		logger.debug("MetricEventDatastore: " + MetricEventDatastore.getInstance().toString());
+	}
+
+	private void process(ConsumerRecords<String, String> records) {
 		for (ConsumerRecord<String, String> record : records) {
 			System.out.println("Consumer " + this.id + ": " + "partition=" + record.partition() + ", offset=" + record.offset() + ", value=" + record.value());
+			try {
+				LogEvent e = LogEvent.parse(record);
+				process(config, e);
+			} catch (JSONException e) {
+				logger.error("LogConsumer.process() exception: " + e);
+				e.printStackTrace();
+			}
 		}
 	}
+	
+	private void process(Config config, LogEvent e) {
+		
+		ConfigProcess configProcess = config.getConfigProcess();
+		List<ConfigProcessItem> configProcessList = configProcess.getConfigProcessList();
+		for (ConfigProcessItem item : configProcessList) {
+			boolean r=true;
+			if (item instanceof ConfigProcessMatch)
+				r = processMatch((ConfigProcessMatch) item, e);
+			
+			if (item instanceof ConfigProcessMetrics)
+				r = processMetrics((ConfigProcessMetrics) item, e);
+			
+			if (r != true)
+				return;
+		}
+		
+	}
+
+	private boolean processMatch(ConfigProcessMatch config, LogEvent e) {
+		String tfield = config.getField();
+		String tvalue = e.getJ().getString(tfield);
+		e.getJ().remove(tfield);
+		
+		String regex = config.getPatternRegex();
+		Pattern pattern = Pattern.compile(regex);
+		Matcher m = pattern.matcher(tvalue);
+		if (!m.find()) {
+			logger.error("Process match fail: target value=" + tvalue);
+			return false;
+		}
+
+		StringBuffer sb = new StringBuffer();
+		sb.append("Process match success:");
+		List<TypeField> typeFieldList = config.getTypeFieldList();
+		for (TypeField tf : typeFieldList) {
+			int pos = tf.getPos();
+			String type = tf.getType();
+			String value = m.group(pos);
+			if (tf.getField() != null) {
+				if (TypeField.KEY_LONG.equals(type))
+					e.getJ().put(tf.getField(), Long.parseLong(value));
+				else if (TypeField.KEY_DOUBLE.equals(type))
+					e.getJ().put(tf.getField(), Double.parseDouble(value));
+				else
+					e.getJ().put(tf.getField(), value);
+			}
+			sb.append(" " + pos + "=" + m.group(pos));
+		}
+		logger.debug(sb.toString());
+		logger.debug("Process match output:" + e.getJ().toString());
+		return true;
+	}
+	
+	private boolean processMetrics(ConfigProcessMetrics config, LogEvent e) {
+		String tfield = config.getKey();
+		String tvalue = e.getJ().getString(tfield);
+		
+		MetricEvent me = MetricEventDatastore.getInstance().getMetric(tvalue);
+		me.sampling();
+		return true;
+	}
+
+
 
 }

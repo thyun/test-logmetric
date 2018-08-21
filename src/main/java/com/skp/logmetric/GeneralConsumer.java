@@ -66,9 +66,7 @@ public class GeneralConsumer implements Runnable {
 		try {
 			while (true) {
 				ConsumerRecords<String, String> records = consumer.poll(Long.MAX_VALUE);
-				for (ConsumerRecord<String, String> record : records) {
-					System.out.println("Consumer " + this.id + ": " + "partition=" + record.partition() + ", offset=" + record.offset() + ", value=" + record.value());
-				}
+				process(records);
 			}
 		} catch (WakeupException e) {
 			// ignore for shutdown 
@@ -81,9 +79,13 @@ public class GeneralConsumer implements Runnable {
 		consumer.wakeup();
 	}
 	
-	// For test
+	// Used for test
 	public void consume() {
 		ConsumerRecords<String, String> records = consumer.poll(Long.MAX_VALUE);
+		process(records);
+	}
+	
+	private void process(ConsumerRecords<String, String> records) {
 		for (ConsumerRecord<String, String> record : records) {
 			System.out.println("Consumer " + this.id + ": " + "partition=" + record.partition() + ", offset=" + record.offset() + ", value=" + record.value());
 		}

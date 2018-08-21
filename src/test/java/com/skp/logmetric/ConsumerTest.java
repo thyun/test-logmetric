@@ -24,41 +24,42 @@ import com.skp.logmetric.config.ConfigProcess;
 import com.skp.logmetric.config.ConfigProcessItem;
 import com.skp.logmetric.config.ConfigProcessMatch;
 import com.skp.logmetric.config.TypeField;
+import com.skp.logmetric.consumer.LogConsumer;
 import com.skp.testutil.ResourceHelper;
 import com.skp.testutil.ResourceHelper.LineReadCallback;
 
 public class ConsumerTest {
 	private static final Logger logger = LoggerFactory.getLogger(ConsumerTest.class);
-	MockConsumer<String, String> consumer;
+	MockConsumer<String, String> kafkaConsumer;
 	long offset;
 	
 	@Before
 	public void setUp() {
-	    consumer = new MockConsumer<String, String>(OffsetResetStrategy.EARLIEST);
+	    kafkaConsumer = new MockConsumer<String, String>(OffsetResetStrategy.EARLIEST);
 	}
 	
 	@Test
 	public void testConsumer() throws IOException {
 	    // Setup consumer
 		String topic = "my_topic";
-	    GeneralConsumer runnableConsumer = new GeneralConsumer(1, consumer);
+	    GeneralConsumer runnableConsumer = new GeneralConsumer(1, kafkaConsumer);
 	    runnableConsumer.assign(topic, Arrays.asList(0));
 	    
 	    // Set topic offset
 	    HashMap<TopicPartition, Long> beginningOffsets = new HashMap<>();
 	    beginningOffsets.put(new TopicPartition(topic, 0), 0L);
-	    consumer.updateBeginningOffsets(beginningOffsets);
+	    kafkaConsumer.updateBeginningOffsets(beginningOffsets);
 
 	    // Create record
-	    consumer.addRecord(new ConsumerRecord<String, String>("my_topic", 0, 
+	    kafkaConsumer.addRecord(new ConsumerRecord<String, String>("my_topic", 0, 
 	    				0L, "mykey", "myvalue0"));
-	    consumer.addRecord(new ConsumerRecord<String, String>("my_topic", 0,
+	    kafkaConsumer.addRecord(new ConsumerRecord<String, String>("my_topic", 0,
 	                    1L, "mykey", "myvalue1"));
-	    consumer.addRecord(new ConsumerRecord<String, String>("my_topic", 0,
+	    kafkaConsumer.addRecord(new ConsumerRecord<String, String>("my_topic", 0,
 	                    2L, "mykey", "myvalue2"));
-	    consumer.addRecord(new ConsumerRecord<String, String>("my_topic", 0,
+	    kafkaConsumer.addRecord(new ConsumerRecord<String, String>("my_topic", 0,
 	                    3L, "mykey", "myvalue3"));
-	    consumer.addRecord(new ConsumerRecord<String, String>("my_topic", 0,
+	    kafkaConsumer.addRecord(new ConsumerRecord<String, String>("my_topic", 0,
 	                    4L, "mykey", "myvalue4"));
 
 	    // Consume
@@ -69,20 +70,20 @@ public class ConsumerTest {
 	public void testConsumerAccessLogPlain() throws IOException {
 	    // Setup consumer
 		String topic = "my_topic";
-	    GeneralConsumer runnableConsumer = new GeneralConsumer(1, consumer);
+	    GeneralConsumer runnableConsumer = new GeneralConsumer(1, kafkaConsumer);
 	    runnableConsumer.assign(topic, Arrays.asList(0));
 	    
 	    // Set topic offset
 	    HashMap<TopicPartition, Long> beginningOffsets = new HashMap<>();
 	    beginningOffsets.put(new TopicPartition(topic, 0), 0L);
-	    consumer.updateBeginningOffsets(beginningOffsets);
+	    kafkaConsumer.updateBeginningOffsets(beginningOffsets);
 
 	    // Create record
 	    offset = 0;
 		ResourceHelper.processResource("com/skp/logmetric/access.log", new LineReadCallback() {
 			@Override
 			public void processLine(String line) {
-				consumer.addRecord(new ConsumerRecord<String, String>("my_topic", 0, 
+				kafkaConsumer.addRecord(new ConsumerRecord<String, String>("my_topic", 0, 
 	    				offset++, "mykey", line));
 			} 
 		});
@@ -95,20 +96,20 @@ public class ConsumerTest {
 	public void testConsumerAccessLogJson() throws IOException {
 	    // Setup consumer
 		String topic = "my_topic";
-	    GeneralConsumer runnableConsumer = new GeneralConsumer(1, consumer);
+	    GeneralConsumer runnableConsumer = new GeneralConsumer(1, kafkaConsumer);
 	    runnableConsumer.assign(topic, Arrays.asList(0));
 	    
 	    // Set topic offset
 	    HashMap<TopicPartition, Long> beginningOffsets = new HashMap<>();
 	    beginningOffsets.put(new TopicPartition(topic, 0), 0L);
-	    consumer.updateBeginningOffsets(beginningOffsets);
+	    kafkaConsumer.updateBeginningOffsets(beginningOffsets);
 
 	    // Create record
 	    offset = 0;
 		ResourceHelper.processResource("com/skp/logmetric/access.log", new LineReadCallback() {
 			@Override
 			public void processLine(String line) {
-				consumer.addRecord(new ConsumerRecord<String, String>(topic, 0, 
+				kafkaConsumer.addRecord(new ConsumerRecord<String, String>(topic, 0, 
 	    				offset++, "mykey", produceJson(line)));
 			}
 
@@ -141,9 +142,9 @@ public class ConsumerTest {
 	 * (\S+) (\S+) (\S+) \[(.+?)\] "(\S+) (\S+) (\S+)" (\d+) (\d+) "(.*?)" "(.*?)" "([\d\.]+)"(?:$|\s.*)
 	 * 
 	 * {
-	 *   "type": "access",
+	 * 	 "sampling": 10,
 	 *   "host": "test.com",
-	 *   "count": 10,
+	 *   "type": "access",
 	 *   "responseCode.sum": 10000,
 	 *   "responseCode.min": 1000,
 	 *   "responseCode.max": 5000,
@@ -160,102 +161,33 @@ public class ConsumerTest {
 	 */
 	@Test
 	public void testProcess() throws IOException, ParseException {
+		// Get config
+		String input = ResourceHelper.getResourceString("process.conf");
+		Config config = Config.create(input);
+		
 	    // Setup consumer
 		String topic = "my_topic";
-	    GeneralConsumer runnableConsumer = new GeneralConsumer(1, consumer);
-	    runnableConsumer.assign(topic, Arrays.asList(0));
+	    LogConsumer consumer = new LogConsumer(1, kafkaConsumer, config);
+	    consumer.assign(topic, Arrays.asList(0));
 	    
 	    // Set topic offset
 	    HashMap<TopicPartition, Long> beginningOffsets = new HashMap<>();
 	    beginningOffsets.put(new TopicPartition(topic, 0), 0L);
-	    consumer.updateBeginningOffsets(beginningOffsets);
+	    kafkaConsumer.updateBeginningOffsets(beginningOffsets);
 
 	    // Create record
 	    offset = 0;
 		ResourceHelper.processResource("com/skp/logmetric/access.log", new LineReadCallback() {
 			@Override
 			public void processLine(String line) {
-				consumer.addRecord(new ConsumerRecord<String, String>("my_topic", 0, 
+				kafkaConsumer.addRecord(new ConsumerRecord<String, String>("my_topic", 0, 
 	    				offset++, "mykey", produceJson(line)));
 			}
 
 		});
 
 	    // Consume
-	    runnableConsumer.consume();
-		
-/*		String input = ResourceHelper.getResourceString("process.conf");
-		Config config = Config.create(input);
-		
-		ResourceHelper.processResource("com/skp/logmetric/access.log", new LineReadCallback() {
-			@Override
-			public void processLine(String line) {
-				long count=0;
-				process(config, line);
-			}
-		}); */
-	}
-
-	private void process(Config config, String line) {
-		JSONObject log = new JSONObject();
-		
-		ConfigProcess configProcess = config.getConfigProcess();
-		List<ConfigProcessItem> configProcessList = configProcess.getConfigProcessList();
-		for (ConfigProcessItem item : configProcessList) {
-			if (item instanceof ConfigProcessMatch)
-				processMatch((ConfigProcessMatch) item, line, log);
-		}
-/*		for (int i=0; i<configProcessList.size(); i++) {
-			ConfigProcessItem item = configProcessList.get(i);
-			if (item instanceof ConfigProcessMatch)
-				processMatch((ConfigProcessMatch) item, line, log);
-		} */
-		
-	}
-
-	private void processMatch(ConfigProcessMatch config, String line, JSONObject log) {
-		String regex = config.getPatternRegex();
-		Pattern pattern = Pattern.compile(regex);
-		Matcher m = pattern.matcher(line);
-		if (!m.find()) {
-			logger.error("Process match fail: line=" + line);
-			return;
-		}
-
-		StringBuffer sb = new StringBuffer();
-		sb.append("Process match ");
-		List<TypeField> typeFieldList = config.getTypeFieldList();
-		for (TypeField tf : typeFieldList) {
-			int pos = tf.getPos();
-			String type = tf.getType();
-			String value = m.group(pos);
-			if (tf.getField() != null) {
-				if (TypeField.KEY_LONG.equals(type))
-					log.put(tf.getField(), Long.parseLong(value));
-				else if (TypeField.KEY_DOUBLE.equals(type))
-					log.put(tf.getField(), Double.parseDouble(value));
-				else
-					log.put(tf.getField(), value);
-			}
-			sb.append(" " + pos + "=" + m.group(pos));
-		}
-/*		for (int i=0; i<typeFieldList.size(); i++) {
-			TypeField tf = typeFieldList.get(i);
-			int pos = tf.getPos();
-			String type = tf.getType();
-			String value = m.group(pos);
-			if (tf.getField() != null) {
-				if (TypeField.KEY_LONG.equals(type))
-					log.put(tf.getField(), Long.parseLong(value));
-				else if (TypeField.KEY_DOUBLE.equals(type))
-					log.put(tf.getField(), Double.parseDouble(value));
-				else
-					log.put(tf.getField(), value);
-			}
-			sb.append(" " + pos + "=" + m.group(pos));
-		} */
-//		logger.debug(sb.toString());
-		logger.debug(log.toString());
+	    consumer.consume();
 	}
 	
 }

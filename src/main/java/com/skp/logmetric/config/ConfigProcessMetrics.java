@@ -8,6 +8,7 @@ import lombok.Data;
 public class ConfigProcessMetrics extends ConfigProcessItem {
 	JSONObject j;
 	String type;
+	String key;
 
 	public ConfigProcessMetrics(JSONObject j) {
 		super();
@@ -17,6 +18,7 @@ public class ConfigProcessMetrics extends ConfigProcessItem {
 
 	private void init() {
 		type = (String) j.get("type");
+		key = (String) j.get("key");
 	}
 
 	public void prepare() {
