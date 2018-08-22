@@ -1,10 +1,11 @@
-package com.skp.testutil;
+package com.skp.util;
 
 import java.io.IOException;
 
 import org.junit.Test;
 
-import com.skp.testutil.ResourceHelper.LineReadCallback;
+import com.skp.util.ResourceHelper;
+import com.skp.util.ResourceHelper.LineReadCallback;
 
 public class ResourceHelperTest {
 	

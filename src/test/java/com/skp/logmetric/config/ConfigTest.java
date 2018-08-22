@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.skp.testutil.ResourceHelper;
+import com.skp.util.ResourceHelper;
 
 public class ConfigTest {
 	private static final Logger logger = LoggerFactory.getLogger(ConfigTest.class);

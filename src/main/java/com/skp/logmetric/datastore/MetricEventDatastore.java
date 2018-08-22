@@ -30,7 +30,8 @@ public class MetricEventDatastore {
 		StringBuffer sb = new StringBuffer();
 		for (MetricEvent me : hashMap.values()) {
 			sb.append("\n");
-			sb.append(me.toString());
+			sb.append(me.export());
+//			sb.append(me.toString());
 		}
 		return sb.toString();
 	}

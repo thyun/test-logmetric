@@ -25,8 +25,8 @@ import com.skp.logmetric.config.ConfigProcessItem;
 import com.skp.logmetric.config.ConfigProcessMatch;
 import com.skp.logmetric.config.TypeField;
 import com.skp.logmetric.process.LogProcess;
-import com.skp.testutil.ResourceHelper;
-import com.skp.testutil.ResourceHelper.LineReadCallback;
+import com.skp.util.ResourceHelper;
+import com.skp.util.ResourceHelper.LineReadCallback;
 
 public class ConsumerTest {
 	private static final Logger logger = LoggerFactory.getLogger(ConsumerTest.class);
@@ -110,7 +110,7 @@ public class ConsumerTest {
 			@Override
 			public void processLine(String line) {
 				kafkaConsumer.addRecord(new ConsumerRecord<String, String>(topic, 0, 
-	    				offset++, "mykey", produceJson(line)));
+	    				offset++, "mykey", produceJson("web01", line)));
 			}
 
 		});
@@ -119,9 +119,9 @@ public class ConsumerTest {
 	    runnableConsumer.consume();
 	}
 	
-	private String produceJson(String line) {
+	private String produceJson(String host, String line) {
 		JSONObject j = new JSONObject();
-		j.put("host", "web01");
+		j.put("host", host);
 //		j.put("@timestamp", value);
 		j.put("log",  line);
 		return j.toString();
@@ -145,7 +145,7 @@ public class ConsumerTest {
 	 * 	 "sampling": 10,
 	 *   "host": "test.com",
 	 *   "type": "access",
-	 *   "@timestamp": "",
+	 *   "@timestamp": "2018-08-22T08:37:09.850Z",
 	 *   "responseCode.sum": 10000,
 	 *   "responseCode.min": 1000,
 	 *   "responseCode.max": 5000,
@@ -182,7 +182,9 @@ public class ConsumerTest {
 			@Override
 			public void processLine(String line) {
 				kafkaConsumer.addRecord(new ConsumerRecord<String, String>("my_topic", 0, 
-	    				offset++, "mykey", produceJson(line)));
+	    				offset++, "mykey", produceJson("web01", line)));
+				kafkaConsumer.addRecord(new ConsumerRecord<String, String>("my_topic", 0, 
+	    				offset++, "mykey", produceJson("web02", line)));
 			}
 
 		});

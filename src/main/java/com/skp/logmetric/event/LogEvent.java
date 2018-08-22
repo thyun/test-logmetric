@@ -4,7 +4,7 @@ import java.util.Date;
 
 import org.json.JSONObject;
 
-import com.skp.testutil.CommonHelper;
+import com.skp.util.CommonHelper;
 
 import lombok.Data;
 

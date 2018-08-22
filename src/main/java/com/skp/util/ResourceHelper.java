@@ -1,4 +1,4 @@
-package com.skp.testutil;
+package com.skp.util;
 
 import java.io.BufferedReader;
 import java.io.File;

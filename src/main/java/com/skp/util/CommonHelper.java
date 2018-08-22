@@ -1,4 +1,4 @@
-package com.skp.testutil;
+package com.skp.util;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
