@@ -14,7 +14,7 @@ import lombok.Data;
 public class ConfigProcessMatch extends ConfigProcessItem {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	JSONObject j;
+//	JSONObject j;
 	String type;
 	String field;
 	String pattern;
@@ -22,12 +22,12 @@ public class ConfigProcessMatch extends ConfigProcessItem {
 	ArrayList<TypeField> typeFieldList = new ArrayList<>();
 
 	public ConfigProcessMatch(JSONObject j) {
-		this.j = j;
-		init();
+//		this.j = j;
+		init(j);
 	}
 
 	// TODO Read pattern from file
-	private void init() {
+	private void init(JSONObject j) {
 		type = (String) j.get("type");
 		field = (String) j.get("field");
 		pattern = "%{WORD:ip} %{WORD:identd} %{WORD:userid} \\[%{DATE:date}\\] \"%{WORD} %{WORD:request} %{WORD}\" %{LONG:responseCode} %{LONG:byteSent} \"%{DATA:referer}\" \"%{DATA:client}\" \"%{DOUBLE:responseTime}\"(?:$|\\s.*)";		

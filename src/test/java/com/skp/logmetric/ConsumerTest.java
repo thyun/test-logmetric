@@ -24,7 +24,7 @@ import com.skp.logmetric.config.ConfigProcess;
 import com.skp.logmetric.config.ConfigProcessItem;
 import com.skp.logmetric.config.ConfigProcessMatch;
 import com.skp.logmetric.config.TypeField;
-import com.skp.logmetric.consumer.LogConsumer;
+import com.skp.logmetric.process.LogProcess;
 import com.skp.testutil.ResourceHelper;
 import com.skp.testutil.ResourceHelper.LineReadCallback;
 
@@ -145,6 +145,7 @@ public class ConsumerTest {
 	 * 	 "sampling": 10,
 	 *   "host": "test.com",
 	 *   "type": "access",
+	 *   "@timestamp": "",
 	 *   "responseCode.sum": 10000,
 	 *   "responseCode.min": 1000,
 	 *   "responseCode.max": 5000,
@@ -167,7 +168,7 @@ public class ConsumerTest {
 		
 	    // Setup consumer
 		String topic = "my_topic";
-	    LogConsumer consumer = new LogConsumer(1, kafkaConsumer, config);
+	    LogProcess consumer = new LogProcess(1, kafkaConsumer, config);
 	    consumer.assign(topic, Arrays.asList(0));
 	    
 	    // Set topic offset
@@ -189,5 +190,5 @@ public class ConsumerTest {
 	    // Consume
 	    consumer.consume();
 	}
-	
+
 }

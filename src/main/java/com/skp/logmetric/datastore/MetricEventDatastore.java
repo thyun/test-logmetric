@@ -17,17 +17,22 @@ public class MetricEventDatastore {
 		return instance;
 	}
 	
-	public MetricEvent getMetric(String key) {
-		MetricEvent me = hashMap.get(key);
+	public MetricEvent getMetricEvent(String tkey, String tvalue) {
+		MetricEvent me = hashMap.get(tvalue);
 		if (me == null) {
-			me = new MetricEvent(key, new JSONObject());
-			hashMap.put(key, me);
+			me = new MetricEvent(tkey, tvalue);
+			hashMap.put(tvalue, me);
 		}
 		return me;
 	}
 	
 	public String toString() {
-		return hashMap.toString();
+		StringBuffer sb = new StringBuffer();
+		for (MetricEvent me : hashMap.values()) {
+			sb.append("\n");
+			sb.append(me.toString());
+		}
+		return sb.toString();
 	}
 
 }
