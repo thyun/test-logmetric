@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class MetricEvent extends LogEvent {
 	int sampling;
-	HashMap<String, MetricStats> metricStatsHashMap = new HashMap<>();
+	HashMap<String, MetricFieldStats> metricFieldStatsHashMap = new HashMap<>();
 	
 	public MetricEvent(String tkey, String tvalue) {
 		super(tvalue);
@@ -22,25 +22,26 @@ public class MetricEvent extends LogEvent {
 	}
 
 	public void stats(String meter, Long o) {
-		MetricStats ms = getMetricStats(meter);
+		MetricFieldStats ms = getMetricStats(meter, o);
 		ms.apply(o);
 	}
 
 	public void stats(String meter, Double o) {
-		MetricStats ms = getMetricStats(meter);
+		MetricFieldStats ms = getMetricStats(meter, o);
 		ms.apply(o);
 		
 	}
 
 	public void stats(String meter, String o) {
-		MetricStats ms = getMetricStats(meter);		
+		MetricFieldStats ms = getMetricStats(meter, o);
+		ms.apply(o);
 	}
 
-	private MetricStats getMetricStats(String meter) {
-		MetricStats ms = metricStatsHashMap.get(meter);
+	private MetricFieldStats getMetricStats(String meter, Object value) {
+		MetricFieldStats ms = metricFieldStatsHashMap.get(meter);
 		if (ms == null) {
-			ms = new MetricStats(meter);
-			metricStatsHashMap.put(meter, ms);
+			ms = new MetricFieldStats(meter, value);
+			metricFieldStatsHashMap.put(meter, ms);
 		}
 		return ms;
 	}
@@ -55,7 +56,7 @@ public class MetricEvent extends LogEvent {
 			j.put(key, this.get(key));
 		}
 		
-		for (MetricStats ms: metricStatsHashMap.values()) {
+		for (MetricFieldStats ms: metricFieldStatsHashMap.values()) {
 			ms.export(j);
 //			sb.append(" ");
 //			sb.append(ms.toString());
@@ -75,7 +76,7 @@ public class MetricEvent extends LogEvent {
 			sb.append(" " + key + "=" + this.getString(key));
 		}
 		
-		for (MetricStats ms: metricStatsHashMap.values()) {
+		for (MetricFieldStats ms: metricFieldStatsHashMap.values()) {
 			sb.append(" ");
 			sb.append(ms.toString());
 		}

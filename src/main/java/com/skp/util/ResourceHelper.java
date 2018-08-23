@@ -8,8 +8,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ResourceHelper {
+	private static final Logger logger = LoggerFactory.getLogger(ResourceHelper.class);
 
 	public static String getResourceString(String relativePath) {
 		InputStream is = getResourceInputStream(relativePath);
@@ -23,14 +29,14 @@ public class ResourceHelper {
         
         try {                                                                            
             inputStream = new FileInputStream(new File(path));                           
-//            logHandler.debug("getConfigInputStream config from file: " + path);          
+//          logger.debug("getConfigInputStream config from file: " + path);          
             return inputStream;                                                          
         } catch (FileNotFoundException e) {                                              
-//          logHandler.debug("getConfigInputStream config from file: " + path);          
+//          logger.debug("getConfigInputStream config from file: " + path);          
         }                                                                                
                                                                                          
         inputStream = ResourceHelper.class.getClassLoader().getResourceAsStream(relativePath);       
-//        logHandler.debug("getConfigInputStream config from resource: " + file);          
+//        	logger.debug("getConfigInputStream config from resource: " + file);          
         return inputStream;                                                              
     }            
     
@@ -43,7 +49,7 @@ public class ResourceHelper {
                 textBuilder.append((char) c);                              
             }                                                              
         } catch (IOException e) {                                          
-            e.printStackTrace();                                           
+        	logger.error(e.toString());                                          
         }                                                                  
         return textBuilder.toString();                                     
     }
@@ -51,21 +57,34 @@ public class ResourceHelper {
     // line-by-line callback
     public static void processResource(String relativePath, LineReadCallback callback) {   
     	InputStream is = getResourceInputStream(relativePath);
-//        StringBuilder textBuilder = new StringBuilder();                   
         try {                                                              
             BufferedReader reader = new BufferedReader(new InputStreamReader(is)); 
             String line;    
             while ((line = reader.readLine()) != null) {
-//                textBuilder.append(line);
                 callback.processLine(line);
             }                                                              
         } catch (IOException e) {                                          
-            e.printStackTrace();                                           
+        	logger.error(e.toString());                                          
         }
-//        return textBuilder.toString();                                     
     }
 	
     public interface LineReadCallback {
     	void processLine(String line);
     }
+
+	public static List<String> getResourceLineList(String relativePath) {
+    	InputStream is = getResourceInputStream(relativePath);
+    	ArrayList<String> lineList = new ArrayList<>();
+    	
+    	try {                                                              
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is)); 
+            String line;    
+            while ((line = reader.readLine()) != null) {
+                lineList.add(line);
+            }                                                              
+        } catch (IOException e) {                                          
+            logger.error(e.toString());                                           
+        }
+    	return lineList;
+	}
 }
