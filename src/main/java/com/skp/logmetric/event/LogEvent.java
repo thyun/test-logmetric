@@ -30,8 +30,17 @@ public class LogEvent extends JSONObject {
 		super(value);
 		this.key = key;
 		
-		this.timestamp = new Date();
+		setTimestamp(new Date());
+	}
+	
+	public void setTimestamp(Date timestamp) {
+		this.timestamp = timestamp;
 		this.put("@timestamp", CommonHelper.timestamp2Str(timestamp));
+	}
+
+	public void setTimestamp(Date timestamp, String target) {
+		this.timestamp = timestamp;
+		this.put(target, CommonHelper.timestamp2Str(timestamp));
 	}
 
 }

@@ -11,10 +11,10 @@ import com.skp.util.ResourceHelper;
 import lombok.Data;
 
 @Data
-public class ConfigRegex {
+public class ConfigRegex extends HashMap<String, String> {
+	private static final long serialVersionUID = 1L;
 	public final static String DELIMITER = "=";
 	private static ConfigRegex instance = null;
-	Map<String, String> map;
 	
 	public static ConfigRegex getInstance() {
 		if (instance == null) {
@@ -24,7 +24,7 @@ public class ConfigRegex {
 	}
 
 	public static ConfigRegex create(List<String> lineList) {
-		Map map = lineList.stream()
+		Map<String, String> map = lineList.stream()
 		.filter(line -> {
 			return line.indexOf(DELIMITER) > 0;
 		})
@@ -32,22 +32,18 @@ public class ConfigRegex {
 			int index = line.indexOf(DELIMITER);
 			String key, value;
 			key = line.substring(0, index).trim();
-			value = line.substring(index).trim();
+			value = line.substring(index+1).trim();
 			return new KeyValue(key, value);
 		}).collect(Collectors.toMap(KeyValue::getKey, KeyValue::getValue));
 		return new ConfigRegex(map);
 	}
 	
-	public ConfigRegex(Map map) {
-		this.map = map;
+	public ConfigRegex(Map<String, String> map) {
+		super(map);
 	}
 	
-//	public static RegexConfig create() {
-//		return new RegexConfig();
-//	}
-	
-	public void add(String key, String value) {
-		map.put(key, value);
+	public String toString() {
+		return super.toString();
 	}
 
 

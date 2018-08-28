@@ -24,7 +24,9 @@ import com.skp.logmetric.config.ConfigProcess;
 import com.skp.logmetric.config.ConfigProcessItem;
 import com.skp.logmetric.config.ConfigProcessMatch;
 import com.skp.logmetric.config.TypeField;
+import com.skp.logmetric.datastore.MetricEventDatastore;
 import com.skp.logmetric.process.LogProcess;
+import com.skp.logmetric.process.ProcessMetricsService;
 import com.skp.util.ResourceHelper;
 import com.skp.util.ResourceHelper.LineReadCallback;
 
@@ -122,7 +124,6 @@ public class ConsumerTest {
 	private String produceJson(String host, String line) {
 		JSONObject j = new JSONObject();
 		j.put("host", host);
-//		j.put("@timestamp", value);
 		j.put("log",  line);
 		return j.toString();
 	} 
@@ -168,6 +169,7 @@ public class ConsumerTest {
 	    // Setup consumer
 		String topic = "my_topic";
 	    LogProcess consumer = new LogProcess(1, kafkaConsumer, config);
+	    consumer.init();
 	    consumer.assign(topic, Arrays.asList(0));
 	    
 	    // Set topic offset
@@ -190,6 +192,11 @@ public class ConsumerTest {
 
 	    // Consume
 	    consumer.consume();
+
+	    // Export
+	    ProcessMetricsService service = new ProcessMetricsService();
+	    service.export(0);
+	    service.export(0);
 	}
 
 }

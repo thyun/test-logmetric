@@ -1,7 +1,10 @@
 package com.skp.logmetric.process;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import com.skp.logmetric.ConsumerTest;
 import com.skp.logmetric.config.Config;
 import com.skp.logmetric.config.ConfigProcess;
+import com.skp.logmetric.config.ConfigProcessDate;
 import com.skp.logmetric.config.ConfigProcessItem;
 import com.skp.logmetric.config.ConfigProcessMatch;
 import com.skp.logmetric.config.ConfigProcessMetrics;
@@ -31,6 +35,7 @@ import com.skp.logmetric.config.TypeField;
 import com.skp.logmetric.datastore.MetricEventDatastore;
 import com.skp.logmetric.event.LogEvent;
 import com.skp.logmetric.event.MetricEvent;
+import com.skp.util.CommonHelper;
 
 public class LogProcess implements Runnable {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -38,11 +43,17 @@ public class LogProcess implements Runnable {
 	private final int id;
 	private final Consumer<String, String> consumer;
 	private final Config config;
+	ProcessMatch processMatch = new ProcessMatch();
+	ProcessDate processDate = new ProcessDate();
+	ProcessMetrics processMetrics = new ProcessMetrics();
 	
 	public LogProcess(int id, Consumer<String, String> consumer, Config config) {
 		this.id = id;
 		this.consumer = consumer;
 		this.config = config;
+	}
+	
+	public void init() {
 	}
 	
 	public void subscribe(List<String> topics) {
@@ -81,7 +92,6 @@ public class LogProcess implements Runnable {
 	public void consume() {
 		ConsumerRecords<String, String> records = consumer.poll(Long.MAX_VALUE);
 		process(records);
-		logger.debug("MetricEventDatastore: " + MetricEventDatastore.getInstance().toString());
 	}
 
 	private void process(ConsumerRecords<String, String> records) {
@@ -92,7 +102,6 @@ public class LogProcess implements Runnable {
 				process(config, e);
 			} catch (JSONException e) {
 				logger.error("LogConsumer.process() exception: " + e);
-				e.printStackTrace();
 			}
 		}
 	}
@@ -104,68 +113,18 @@ public class LogProcess implements Runnable {
 		for (ConfigProcessItem item : configProcessList) {
 			boolean r=true;
 			if (item instanceof ConfigProcessMatch)
-				r = processMatch((ConfigProcessMatch) item, e);
+				r = processMatch.process((ConfigProcessMatch) item, e);
+			
+			if (item instanceof ConfigProcessDate)
+				r = processDate.process((ConfigProcessDate) item, e);
 			
 			if (item instanceof ConfigProcessMetrics)
-				r = processMetrics((ConfigProcessMetrics) item, e);
+				r = processMetrics.process((ConfigProcessMetrics) item, e);
 			
-			if (r != true)
-				return;
+//			if (r != true)
+//				return;
 		}
 		
-	}
-
-	private boolean processMatch(ConfigProcessMatch config, LogEvent e) {
-		String tfield = config.getField();
-		String tvalue = e.getString(tfield);
-		e.remove(tfield);
-		
-		String regex = config.getPatternRegex();
-		Pattern pattern = Pattern.compile(regex);
-		Matcher m = pattern.matcher(tvalue);
-		if (!m.find()) {
-			logger.error("Process match fail: target value=" + tvalue);
-			return false;
-		}
-
-		StringBuffer sb = new StringBuffer();
-		sb.append("Process match success:");
-		List<TypeField> typeFieldList = config.getTypeFieldList();
-		for (TypeField tf : typeFieldList) {
-			int pos = tf.getPos();
-			String type = tf.getType();
-			String value = m.group(pos);
-			if (tf.getField() != null) {
-				if (TypeField.KEY_LONG.equals(type))
-					e.put(tf.getField(), Long.parseLong(value));
-				else if (TypeField.KEY_DOUBLE.equals(type))
-					e.put(tf.getField(), Double.parseDouble(value));
-				else
-					e.put(tf.getField(), value);
-			}
-			sb.append(" " + pos + "=" + m.group(pos));
-		}
-		logger.debug(sb.toString());
-		logger.debug("Process match output:" + e.toString());
-		return true;
-	}
-	
-	private boolean processMetrics(ConfigProcessMetrics config, LogEvent e) {
-		String tkey = config.getKey();
-		String tvalue = e.getString(tkey);
-		
-		MetricEvent me = MetricEventDatastore.getInstance().getMetricEvent(tkey, tvalue);
-		me.sampling();
-		for (String meter: config.getMeter()) {
-			Object o = e.get(meter);
-			if (o instanceof Long)
-				me.stats(meter, (Long) o);
-			else if (o instanceof Double)
-				me.stats(meter, (Double) o);
-			else
-				me.stats(meter, (String) o);
-		}
-		return true;
 	}
 
 }

@@ -1,5 +1,7 @@
 package com.skp.util;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,6 +16,13 @@ public class CommonHelper {
 	public static String timestamp2Str(Date timestamp) {
 		timestampFmt.setTimeZone(TimeZone.getTimeZone("GMT"));
         return timestampFmt.format(timestamp);
+	}
+	
+	public static String exception2Str(Exception ex) {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		ex.printStackTrace(pw);
+		return sw.toString();
 	}
 
 	public static List<String> jsonarray2List(JSONArray jsonArray) {

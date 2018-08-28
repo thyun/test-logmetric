@@ -26,7 +26,6 @@ public class MainApplication {
             System.out.println(beanName);
         }
         
-		logger.info("start");
-		Config config = (Config) ctx.getBean("configInputKafka");
+		logger.info("Start");
 	}
 }

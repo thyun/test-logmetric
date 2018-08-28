@@ -37,6 +37,8 @@ public class ConfigProcess {
 		String type = (String) j.get("type");
 		if ("match".equals(j.get("type"))) {
 			return new ConfigProcessMatch(j);
+		} else if ("date".equals(type)) {
+			return new ConfigProcessDate(j);
 		} else if ("metrics".equals(type)) {
 			return new ConfigProcessMetrics(j);
 		}
@@ -47,9 +49,5 @@ public class ConfigProcess {
 		for (ConfigProcessItem item : configProcessList) {
 			item.prepare();
 		}
-/*		for (int i=0; i<configProcessList.size(); i++) {
-			ConfigProcessItem item = (ConfigProcessItem) configProcessList.get(i);
-			item.prepare();
-		} */
 	}
 }

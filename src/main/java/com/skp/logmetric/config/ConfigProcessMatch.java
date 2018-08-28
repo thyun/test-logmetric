@@ -14,7 +14,6 @@ import lombok.Data;
 public class ConfigProcessMatch extends ConfigProcessItem {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	ConfigRegex configRegex;
 	String type;
 	String field;
 	String pattern;
@@ -25,34 +24,14 @@ public class ConfigProcessMatch extends ConfigProcessItem {
 		init(j);
 	}
 
-	// TODO Read pattern from file
-	private void init(JSONObject j) {
-		configRegex = ConfigRegex.getInstance();
-		
+	private void init(JSONObject j) {		
 		type = (String) j.get("type");
 		field = (String) j.get("field");
 		String s = (String) j.get("pattern");
-		pattern = getValueVariable(s);
-		logger.debug("===pattern=" + pattern);
-//		pattern = "%{WORD:ip} %{WORD:identd} %{WORD:userid} \\[%{DATE:date}\\] \"%{WORD} %{WORD:request} %{WORD}\" %{LONG:responseCode} %{LONG:byteSent} \"%{DATA:referer}\" \"%{DATA:client}\" \"%{DOUBLE:responseTime}\"(?:$|\\s.*)";		
-	}
-
-	String VALUE_VARIABLE_REGEX = "%\\{(\\S+?)}";
-	private String getValueVariable(String variable) {
-		Pattern p = Pattern.compile(VALUE_VARIABLE_REGEX);
-		Matcher m = p.matcher(variable);
-		if (m.find()) {
-			String key = m.group(1);
-			return configRegex.getMap().get(key);		// TODO Remove getMap()
-		}
-		return variable;
+		pattern = ConfigVariable.getValue(s);
 	}
 
 	public void prepare() {
-		preparePattern();
-	}
-	
-	private void preparePattern() {
 		Pattern p = Pattern.compile(TypeField.MATCH_REGEX);
 		Matcher m = p.matcher(pattern);
 		StringBuffer sb = new StringBuffer();

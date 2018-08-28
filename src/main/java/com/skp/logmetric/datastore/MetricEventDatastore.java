@@ -1,15 +1,19 @@
 package com.skp.logmetric.datastore;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.json.JSONObject;
 
 import com.skp.logmetric.event.MetricEvent;
 
+import lombok.Data;
+
+@Data
 public class MetricEventDatastore {
 	static MetricEventDatastore instance = null;
 	
-	HashMap<String, MetricEvent> hashMap = new HashMap<>();
+	ConcurrentHashMap<String, MetricEvent> hashMap = new ConcurrentHashMap<>();
 	public static MetricEventDatastore getInstance() {
 		if (instance == null) {
 			instance = new MetricEventDatastore();

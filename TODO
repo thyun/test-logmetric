@@ -1,7 +1,8 @@
 TODO
-- Config regex 설정 지원: ConfigProcessMatch return configRegex.getMap().get(key);
-- MetricStats: access log timestamp 지원, @timestamp 따른 주기적 export
 - MetricStats: range 지원
-- Config process metrics: 다양한 key 지원, add_field 지원
+- Config process metrics: 다양한 key 지원(host & instance ...), add_field 지원
 - Config input, output 지원
 - Stream 처리
+- LogType 지원
+
+DONE

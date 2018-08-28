@@ -14,7 +14,7 @@ public class Config {
 	ConfigOutput configOutput;
 	String foo;
 	
-	public static Config create(String value) throws ParseException {
+	public static Config create(String value) {
 		Config config = new Config();
 		config.init(value);
 		config.prepare();
@@ -26,7 +26,7 @@ public class Config {
 		return null;
 	}
 	
-	private void init(String value) throws ParseException {
+	private void init(String value) {
 		JSONObject j = new JSONObject(value);
 //		j.put("pattern", "%{WORD:ip} %{WORD:identd} %{WORD:userid} \\[%{DATE:date}\\] \\\"%{WORD} %{WORD:request} %{WORD}\\\" %{LONG:responseCode} %{LONG:byteSent} \\\"%{DATA:referer}\\\" \\\"%{DATA:client}\\\" \\\"%{DOUBLE:responseTime}\\\"(?:$|\\s.*)");
 		init(j);
