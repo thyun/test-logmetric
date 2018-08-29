@@ -15,7 +15,7 @@ public class ConfigProcess {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	JSONArray ja;
-	List<ConfigProcessItem> configProcessList = new ArrayList<ConfigProcessItem>();
+	List<ConfigPlugin> configProcessList = new ArrayList<ConfigPlugin>();
 
 	public ConfigProcess(JSONArray ja) {
 		super();
@@ -26,14 +26,14 @@ public class ConfigProcess {
 	private void init() {
 		for (int i=0; i<ja.length(); i++) {
 			JSONObject j = (JSONObject) ja.get(i);
-			ConfigProcessItem item = createConfigProcessItem(j);
+			ConfigPlugin item = createConfigProcessPlugin(j);
 			if (item != null)
 				configProcessList.add(item);
 		}
 		
 	}
 
-	private ConfigProcessItem createConfigProcessItem(JSONObject j) {
+	private ConfigPlugin createConfigProcessPlugin(JSONObject j) {
 		String type = (String) j.get("type");
 		if ("match".equals(j.get("type"))) {
 			return new ConfigProcessMatch(j);
@@ -46,7 +46,7 @@ public class ConfigProcess {
 	}
 
 	public void prepare() {
-		for (ConfigProcessItem item : configProcessList) {
+		for (ConfigPlugin item : configProcessList) {
 			item.prepare();
 		}
 	}

@@ -10,7 +10,7 @@ import com.skp.util.CommonHelper;
 import lombok.Data;
 
 @Data
-public class ConfigProcessMetrics extends ConfigProcessItem {
+public class ConfigProcessMetrics implements ConfigPlugin {
 	String type;
 	String key;
 	List<String> meter;
@@ -20,7 +20,7 @@ public class ConfigProcessMetrics extends ConfigProcessItem {
 		init(j);
 	}
 
-	private void init(JSONObject j) {
+	public void init(JSONObject j) {
 		type = (String) j.get("type");
 		key = (String) j.get("key");
 		meter = CommonHelper.jsonarray2List(j.getJSONArray("meter"));

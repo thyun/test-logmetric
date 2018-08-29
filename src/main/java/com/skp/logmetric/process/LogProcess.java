@@ -1,41 +1,23 @@
 package com.skp.logmetric.process;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
-import org.apache.kafka.common.serialization.StringDeserializer;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.skp.logmetric.ConsumerTest;
 import com.skp.logmetric.config.Config;
 import com.skp.logmetric.config.ConfigProcess;
 import com.skp.logmetric.config.ConfigProcessDate;
-import com.skp.logmetric.config.ConfigProcessItem;
+import com.skp.logmetric.config.ConfigPlugin;
 import com.skp.logmetric.config.ConfigProcessMatch;
 import com.skp.logmetric.config.ConfigProcessMetrics;
-import com.skp.logmetric.config.TypeField;
-import com.skp.logmetric.datastore.MetricEventDatastore;
 import com.skp.logmetric.event.LogEvent;
-import com.skp.logmetric.event.MetricEvent;
-import com.skp.util.CommonHelper;
 
 public class LogProcess implements Runnable {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -109,8 +91,8 @@ public class LogProcess implements Runnable {
 	private void process(Config config, LogEvent e) {
 		
 		ConfigProcess configProcess = config.getConfigProcess();
-		List<ConfigProcessItem> configProcessList = configProcess.getConfigProcessList();
-		for (ConfigProcessItem item : configProcessList) {
+		List<ConfigPlugin> configProcessList = configProcess.getConfigProcessList();
+		for (ConfigPlugin item : configProcessList) {
 			boolean r=true;
 			if (item instanceof ConfigProcessMatch)
 				r = processMatch.process((ConfigProcessMatch) item, e);

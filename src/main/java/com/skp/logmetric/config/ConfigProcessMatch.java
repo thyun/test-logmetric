@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import lombok.Data;
 
 @Data
-public class ConfigProcessMatch extends ConfigProcessItem {
+public class ConfigProcessMatch implements ConfigPlugin {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	String type;
@@ -24,7 +24,7 @@ public class ConfigProcessMatch extends ConfigProcessItem {
 		init(j);
 	}
 
-	private void init(JSONObject j) {		
+	public void init(JSONObject j) {		
 		type = (String) j.get("type");
 		field = (String) j.get("field");
 		String s = (String) j.get("pattern");

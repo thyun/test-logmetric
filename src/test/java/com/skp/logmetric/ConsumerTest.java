@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 import com.skp.logmetric.GeneralConsumer;
 import com.skp.logmetric.config.Config;
 import com.skp.logmetric.config.ConfigProcess;
-import com.skp.logmetric.config.ConfigProcessItem;
+import com.skp.logmetric.config.ConfigPlugin;
 import com.skp.logmetric.config.ConfigProcessMatch;
 import com.skp.logmetric.config.TypeField;
 import com.skp.logmetric.datastore.MetricEventDatastore;
