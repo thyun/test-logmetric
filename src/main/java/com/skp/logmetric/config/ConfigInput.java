@@ -5,14 +5,14 @@ import java.util.List;
 
 import org.json.JSONObject;
 
+import com.skp.logmetric.input.kafka.ConfigInputKafka;
+
 import lombok.Data;
 
 @Data
 public class ConfigInput {
 	JSONObject j;
-	List<ConfigPlugin> configInputList = new ArrayList<ConfigPlugin>();
-//	String type;
-//	String topic;
+	List<ConfigItem> configInputList = new ArrayList<ConfigItem>();
 
 	public ConfigInput(JSONObject j) {
 		super();
@@ -21,12 +21,12 @@ public class ConfigInput {
 	}
 
 	private void init() {
-		ConfigPlugin item = createConfigInputPlugin(j);
+		ConfigItem item = createConfigInputPlugin(j);
 		if (item != null)
 			configInputList.add(item);
 	}
 
-	private ConfigPlugin createConfigInputPlugin(JSONObject j) {
+	private ConfigItem createConfigInputPlugin(JSONObject j) {
 		String type = (String) j.get("type");
 		if ("kafka".equals(j.get("type"))) {
 			return new ConfigInputKafka(j);

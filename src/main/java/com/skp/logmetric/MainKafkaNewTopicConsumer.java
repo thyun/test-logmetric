@@ -8,19 +8,21 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.skp.logmetric.GeneralConsumer.ConsumerCallback;
 
 /*
  * https://www.confluent.io/blog/tutorial-getting-started-with-the-new-apache-kafka-0-9-consumer-client/
  */
 public class MainKafkaNewTopicConsumer {
 	private static final Logger logger = LoggerFactory.getLogger(MainKafkaNewTopicConsumer.class);
-	
-//    private  ExecutorService executor;
-    
+	    
     public static void main(String[] args) {
     	logger.info("start");
     	
@@ -38,7 +40,14 @@ public class MainKafkaNewTopicConsumer {
 
         final List<GeneralConsumer> consumerList = new ArrayList<>();
         for (int i = 0; i < numConsumers; i++) {
-        	GeneralConsumer consumer = GeneralConsumer.createConsumer(i, broker, groupId);
+        	GeneralConsumer consumer = GeneralConsumer.createConsumer(i, broker, groupId, new ConsumerCallback() {
+    			@Override
+    			public void consume(int id, ConsumerRecords<String, String> records) {
+    				for (ConsumerRecord<String, String> record : records) {
+    					System.out.println("Consumer " + id + ": " + "partition=" + record.partition() + ", offset=" + record.offset() + ", value=" + record.value());
+    				}
+    			}
+              });
             consumerList.add(consumer);
         	
             consumer.subscribe(topics);

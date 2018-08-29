@@ -5,11 +5,14 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.skp.logmetric.process.ConfigProcessMatch;
 import com.skp.util.ResourceHelper;
 
 public class ConfigTest {
@@ -27,10 +30,10 @@ public class ConfigTest {
 		logger.debug("confRegex=" + configRegex);
 		
 		Config config = Config.create(ResourceHelper.getResourceString("process.conf"));
-		List<ConfigPlugin> configInputList = config.getConfigInput().getConfigInputList();
+		List<ConfigItem> configInputList = config.getConfigInput().getConfigInputList();
 		logger.debug("configInputList=" + configInputList);
 		
-		List<ConfigPlugin> configProcessList = config.getConfigProcess().getConfigProcessList();
+		List<ConfigItem> configProcessList = config.getConfigProcess().getConfigProcessList();
 		ConfigProcessMatch configProcessMatch = (ConfigProcessMatch) configProcessList.get(0);
 		logger.debug("pattern=" + configProcessMatch.getPattern());
 		logger.debug("patternRegex=" + configProcessMatch.getPatternRegex());
@@ -38,9 +41,11 @@ public class ConfigTest {
 	
 	@Test
 	public void testDate() throws ParseException {
-		String v = "31/Jul/2018:09:00:00 +0900";
-		String pattern = "dd/MMM/yyyy:HH:mm:ss Z";
-		SimpleDateFormat fmt = new SimpleDateFormat(pattern);
+		String v = "31/Jul/2018:09:00:00";
+		String pattern = "dd/MMM/yyyy:HH:mm:ss";
+//		String v = "31/Jul/2018:09:00:00 +0900";
+//		String pattern = "dd/MMM/yyyy:HH:mm:ss Z";
+		SimpleDateFormat fmt = new SimpleDateFormat(pattern, Locale.ENGLISH);
 		
 		Date timestamp = fmt.parse(v);
 		logger.debug("timestamp=" + timestamp);

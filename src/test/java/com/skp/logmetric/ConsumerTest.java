@@ -21,10 +21,10 @@ import org.slf4j.LoggerFactory;
 import com.skp.logmetric.GeneralConsumer;
 import com.skp.logmetric.config.Config;
 import com.skp.logmetric.config.ConfigProcess;
-import com.skp.logmetric.config.ConfigPlugin;
-import com.skp.logmetric.config.ConfigProcessMatch;
+import com.skp.logmetric.config.ConfigItem;
 import com.skp.logmetric.config.TypeField;
 import com.skp.logmetric.datastore.MetricEventDatastore;
+import com.skp.logmetric.process.ConfigProcessMatch;
 import com.skp.logmetric.process.LogProcess;
 import com.skp.logmetric.process.ProcessMetricsService;
 import com.skp.util.ResourceHelper;
@@ -44,7 +44,7 @@ public class ConsumerTest {
 	public void testConsumer() throws IOException {
 	    // Setup consumer
 		String topic = "my_topic";
-	    GeneralConsumer runnableConsumer = new GeneralConsumer(1, kafkaConsumer);
+	    GeneralConsumer runnableConsumer = new GeneralConsumer(1, kafkaConsumer, null);
 	    runnableConsumer.assign(topic, Arrays.asList(0));
 	    
 	    // Set topic offset
@@ -72,7 +72,7 @@ public class ConsumerTest {
 	public void testConsumerAccessLogPlain() throws IOException {
 	    // Setup consumer
 		String topic = "my_topic";
-	    GeneralConsumer runnableConsumer = new GeneralConsumer(1, kafkaConsumer);
+	    GeneralConsumer runnableConsumer = new GeneralConsumer(1, kafkaConsumer, null);
 	    runnableConsumer.assign(topic, Arrays.asList(0));
 	    
 	    // Set topic offset
@@ -98,7 +98,7 @@ public class ConsumerTest {
 	public void testConsumerAccessLogJson() throws IOException {
 	    // Setup consumer
 		String topic = "my_topic";
-	    GeneralConsumer runnableConsumer = new GeneralConsumer(1, kafkaConsumer);
+	    GeneralConsumer runnableConsumer = new GeneralConsumer(1, kafkaConsumer, null);
 	    runnableConsumer.assign(topic, Arrays.asList(0));
 	    
 	    // Set topic offset

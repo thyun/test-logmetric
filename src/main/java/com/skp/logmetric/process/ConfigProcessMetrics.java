@@ -1,16 +1,17 @@
-package com.skp.logmetric.config;
+package com.skp.logmetric.process;
 
 import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.skp.logmetric.config.ConfigItem;
 import com.skp.util.CommonHelper;
 
 import lombok.Data;
 
 @Data
-public class ConfigProcessMetrics implements ConfigPlugin {
+public class ConfigProcessMetrics implements ConfigItem {
 	String type;
 	String key;
 	List<String> meter;

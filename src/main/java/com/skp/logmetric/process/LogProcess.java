@@ -13,10 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.skp.logmetric.config.Config;
 import com.skp.logmetric.config.ConfigProcess;
-import com.skp.logmetric.config.ConfigProcessDate;
-import com.skp.logmetric.config.ConfigPlugin;
-import com.skp.logmetric.config.ConfigProcessMatch;
-import com.skp.logmetric.config.ConfigProcessMetrics;
+import com.skp.logmetric.config.ConfigItem;
 import com.skp.logmetric.event.LogEvent;
 
 public class LogProcess implements Runnable {
@@ -91,8 +88,8 @@ public class LogProcess implements Runnable {
 	private void process(Config config, LogEvent e) {
 		
 		ConfigProcess configProcess = config.getConfigProcess();
-		List<ConfigPlugin> configProcessList = configProcess.getConfigProcessList();
-		for (ConfigPlugin item : configProcessList) {
+		List<ConfigItem> configProcessList = configProcess.getConfigProcessList();
+		for (ConfigItem item : configProcessList) {
 			boolean r=true;
 			if (item instanceof ConfigProcessMatch)
 				r = processMatch.process((ConfigProcessMatch) item, e);

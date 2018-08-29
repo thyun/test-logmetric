@@ -1,4 +1,4 @@
-package com.skp.logmetric.config;
+package com.skp.logmetric.process;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -8,10 +8,14 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.skp.logmetric.config.ConfigItem;
+import com.skp.logmetric.config.ConfigVariable;
+import com.skp.logmetric.config.TypeField;
+
 import lombok.Data;
 
 @Data
-public class ConfigProcessMatch implements ConfigPlugin {
+public class ConfigProcessMatch implements ConfigItem {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	String type;

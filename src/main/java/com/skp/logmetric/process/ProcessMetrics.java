@@ -1,6 +1,5 @@
 package com.skp.logmetric.process;
 
-import com.skp.logmetric.config.ConfigProcessMetrics;
 import com.skp.logmetric.datastore.MetricEventDatastore;
 import com.skp.logmetric.event.LogEvent;
 import com.skp.logmetric.event.MetricEvent;

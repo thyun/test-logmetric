@@ -18,16 +18,27 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 
 public class GeneralConsumer implements Runnable {
 	private final int id;
-	private final Consumer<String, String> consumer;
+	private final Consumer<String, String> kafkaConsumer;
+	private ConsumerCallback callback = null;
 	
-	public GeneralConsumer(int id, Consumer<String, String> consumer) {
+    public interface ConsumerCallback {
+    	void consume(int id, ConsumerRecords<String, String> records);
+    }
+	
+	public GeneralConsumer(int id, Consumer<String, String> kafkaConsumer, ConsumerCallback callback) {
 		this.id = id;
-		this.consumer = consumer;
+		this.kafkaConsumer = kafkaConsumer;
+		this.callback = callback;
 	}
+	
+	public static GeneralConsumer createConsumer(int id, String broker, String groupId, ConsumerCallback callback) {
+    	KafkaConsumer<String, String> kafkaConsumer = GeneralConsumer.createKafkaConsumer(broker, groupId);
+        return new GeneralConsumer(id, kafkaConsumer, callback);
+    }
 	
     public static GeneralConsumer createConsumer(int id, String broker, String groupId) {
     	KafkaConsumer<String, String> kafkaConsumer = GeneralConsumer.createKafkaConsumer(broker, groupId);
-        return new GeneralConsumer(id, kafkaConsumer);
+        return new GeneralConsumer(id, kafkaConsumer, null);
     }
 	
     private static KafkaConsumer<String, String> createKafkaConsumer(String broker, String groupId) {
@@ -41,7 +52,7 @@ public class GeneralConsumer implements Runnable {
     }
     
 	public void subscribe(List<String> topics) {
-		consumer.subscribe(topics);
+		kafkaConsumer.subscribe(topics);
 	}
 	
 	public void assign(String topic, List<Integer> partitions) {
@@ -58,31 +69,30 @@ public class GeneralConsumer implements Runnable {
 					topicPartitions.add(new TopicPartition(topic, partitionInfo.partition()));
 			}
 		} */
-	    consumer.assign(topicPartitions);
+	    kafkaConsumer.assign(topicPartitions);
 	}
 
 	@Override
 	public void run() {
 		try {
 			while (true) {
-				ConsumerRecords<String, String> records = consumer.poll(Long.MAX_VALUE);
-				process(records);
+				consume();
 			}
 		} catch (WakeupException e) {
 			// ignore for shutdown 
 		} finally {
-			consumer.close();
+			kafkaConsumer.close();
 		}
 	}
 
 	public void shutdown() {
-		consumer.wakeup();
+		kafkaConsumer.wakeup();
 	}
 	
-	// Used for test
 	public void consume() {
-		ConsumerRecords<String, String> records = consumer.poll(Long.MAX_VALUE);
-		process(records);
+		ConsumerRecords<String, String> records = kafkaConsumer.poll(Long.MAX_VALUE);
+		if (callback != null)
+			callback.consume(this.id, records);
 	}
 	
 	private void process(ConsumerRecords<String, String> records) {

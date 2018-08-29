@@ -10,8 +10,9 @@ import org.slf4j.LoggerFactory;
 
 import com.skp.logmetric.config.Config;
 import com.skp.logmetric.config.ConfigInput;
-import com.skp.logmetric.config.ConfigInputKafka;
-import com.skp.logmetric.config.ConfigPlugin;
+import com.skp.logmetric.config.ConfigItem;
+import com.skp.logmetric.input.kafka.ConfigInputKafka;
+import com.skp.logmetric.input.kafka.InputKafka;
 
 public class InputProcess {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -34,7 +35,7 @@ public class InputProcess {
 
 	private void addPlugin() {
 		ConfigInput configInput = config.getConfigInput();
-		for (ConfigPlugin cp: configInput.getConfigInputList()) {
+		for (ConfigItem cp: configInput.getConfigInputList()) {
 			if (cp instanceof ConfigInputKafka) {
 				inputPluginList.add(new InputKafka((ConfigInputKafka) cp));
 			}

@@ -8,6 +8,10 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.skp.logmetric.process.ConfigProcessDate;
+import com.skp.logmetric.process.ConfigProcessMatch;
+import com.skp.logmetric.process.ConfigProcessMetrics;
+
 import lombok.Data;
 
 @Data
@@ -15,7 +19,7 @@ public class ConfigProcess {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	JSONArray ja;
-	List<ConfigPlugin> configProcessList = new ArrayList<ConfigPlugin>();
+	List<ConfigItem> configProcessList = new ArrayList<ConfigItem>();
 
 	public ConfigProcess(JSONArray ja) {
 		super();
@@ -26,14 +30,14 @@ public class ConfigProcess {
 	private void init() {
 		for (int i=0; i<ja.length(); i++) {
 			JSONObject j = (JSONObject) ja.get(i);
-			ConfigPlugin item = createConfigProcessPlugin(j);
+			ConfigItem item = createConfigProcessPlugin(j);
 			if (item != null)
 				configProcessList.add(item);
 		}
 		
 	}
 
-	private ConfigPlugin createConfigProcessPlugin(JSONObject j) {
+	private ConfigItem createConfigProcessPlugin(JSONObject j) {
 		String type = (String) j.get("type");
 		if ("match".equals(j.get("type"))) {
 			return new ConfigProcessMatch(j);
@@ -46,7 +50,7 @@ public class ConfigProcess {
 	}
 
 	public void prepare() {
-		for (ConfigPlugin item : configProcessList) {
+		for (ConfigItem item : configProcessList) {
 			item.prepare();
 		}
 	}

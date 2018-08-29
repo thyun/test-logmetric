@@ -1,11 +1,13 @@
-package com.skp.logmetric.config;
+package com.skp.logmetric.input.kafka;
 
 import org.json.JSONObject;
+
+import com.skp.logmetric.config.ConfigItem;
 
 import lombok.Data;
 
 @Data
-public class ConfigInputKafka implements ConfigPlugin {
+public class ConfigInputKafka implements ConfigItem {
 	String type;
 	String broker;
 	String topic;
