@@ -1,5 +1,7 @@
 package com.skp.logmetric.input;
 
 public interface InputPlugin extends Runnable {
-	public boolean process();
+	public void init();
+	public void start();
+	public void stop();
 }

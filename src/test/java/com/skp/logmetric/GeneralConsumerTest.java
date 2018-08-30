@@ -2,12 +2,10 @@ package com.skp.logmetric;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.MockConsumer;
 import org.apache.kafka.clients.consumer.OffsetResetStrategy;
 import org.apache.kafka.common.TopicPartition;
@@ -20,49 +18,52 @@ import org.slf4j.LoggerFactory;
 
 import com.skp.logmetric.GeneralConsumer;
 import com.skp.logmetric.config.Config;
-import com.skp.logmetric.config.ConfigProcess;
-import com.skp.logmetric.config.ConfigItem;
-import com.skp.logmetric.config.TypeField;
-import com.skp.logmetric.datastore.MetricEventDatastore;
-import com.skp.logmetric.process.ConfigProcessMatch;
-import com.skp.logmetric.process.LogProcess;
+import com.skp.logmetric.process.ProcessProcessor;
 import com.skp.logmetric.process.ProcessMetricsService;
 import com.skp.util.ResourceHelper;
 import com.skp.util.ResourceHelper.LineReadCallback;
 
-public class ConsumerTest {
-	private static final Logger logger = LoggerFactory.getLogger(ConsumerTest.class);
+public class GeneralConsumerTest {
+	private static final Logger logger = LoggerFactory.getLogger(GeneralConsumerTest.class);
+	static String topic = "my_topic";
 	MockConsumer<String, String> kafkaConsumer;
-	long offset;
+	GeneralConsumer.ConsumerCallback callback = new GeneralConsumer.ConsumerCallback() {
+		@Override
+		public void consume(int id, ConsumerRecords<String, String> records) {
+			for (ConsumerRecord<String, String> record : records) {
+				System.out.println("Consumer " + id + ": " + "partition=" + record.partition() + ", offset=" + record.offset() + ", value=" + record.value());
+			}
+		}
+    };
 	
 	@Before
 	public void setUp() {
 	    kafkaConsumer = new MockConsumer<String, String>(OffsetResetStrategy.EARLIEST);
-	}
-	
-	@Test
-	public void testConsumer() throws IOException {
-	    // Setup consumer
-		String topic = "my_topic";
-	    GeneralConsumer runnableConsumer = new GeneralConsumer(1, kafkaConsumer, null);
-	    runnableConsumer.assign(topic, Arrays.asList(0));
 	    
 	    // Set topic offset
 	    HashMap<TopicPartition, Long> beginningOffsets = new HashMap<>();
 	    beginningOffsets.put(new TopicPartition(topic, 0), 0L);
 	    kafkaConsumer.updateBeginningOffsets(beginningOffsets);
+	}
+	
+	@Test
+	public void testConsumer() throws IOException {
+	    // Setup consumer
+	    GeneralConsumer runnableConsumer = new GeneralConsumer(1, kafkaConsumer, callback);
+	    runnableConsumer.assign(topic, Arrays.asList(0));
 
 	    // Create record
+	    offset = 0;
 	    kafkaConsumer.addRecord(new ConsumerRecord<String, String>("my_topic", 0, 
-	    				0L, "mykey", "myvalue0"));
+	    				offset++, "mykey", "myvalue0"));
 	    kafkaConsumer.addRecord(new ConsumerRecord<String, String>("my_topic", 0,
-	                    1L, "mykey", "myvalue1"));
+	                    offset++, "mykey", "myvalue1"));
 	    kafkaConsumer.addRecord(new ConsumerRecord<String, String>("my_topic", 0,
-	                    2L, "mykey", "myvalue2"));
+	                    offset++, "mykey", "myvalue2"));
 	    kafkaConsumer.addRecord(new ConsumerRecord<String, String>("my_topic", 0,
-	                    3L, "mykey", "myvalue3"));
+	                    offset++, "mykey", "myvalue3"));
 	    kafkaConsumer.addRecord(new ConsumerRecord<String, String>("my_topic", 0,
-	                    4L, "mykey", "myvalue4"));
+	                    offset++, "mykey", "myvalue4"));
 
 	    // Consume
 	    runnableConsumer.consume();
@@ -71,14 +72,8 @@ public class ConsumerTest {
 	@Test
 	public void testConsumerAccessLogPlain() throws IOException {
 	    // Setup consumer
-		String topic = "my_topic";
-	    GeneralConsumer runnableConsumer = new GeneralConsumer(1, kafkaConsumer, null);
+	    GeneralConsumer runnableConsumer = new GeneralConsumer(1, kafkaConsumer, callback);
 	    runnableConsumer.assign(topic, Arrays.asList(0));
-	    
-	    // Set topic offset
-	    HashMap<TopicPartition, Long> beginningOffsets = new HashMap<>();
-	    beginningOffsets.put(new TopicPartition(topic, 0), 0L);
-	    kafkaConsumer.updateBeginningOffsets(beginningOffsets);
 
 	    // Create record
 	    offset = 0;
@@ -97,17 +92,17 @@ public class ConsumerTest {
 	@Test
 	public void testConsumerAccessLogJson() throws IOException {
 	    // Setup consumer
-		String topic = "my_topic";
-	    GeneralConsumer runnableConsumer = new GeneralConsumer(1, kafkaConsumer, null);
-	    runnableConsumer.assign(topic, Arrays.asList(0));
+	    GeneralConsumer runnableConsumer = new GeneralConsumer(1, kafkaConsumer, callback);
+	    runnableConsumer.subscribe(Arrays.asList(topic));
 	    
-	    // Set topic offset
-	    HashMap<TopicPartition, Long> beginningOffsets = new HashMap<>();
-	    beginningOffsets.put(new TopicPartition(topic, 0), 0L);
-	    kafkaConsumer.updateBeginningOffsets(beginningOffsets);
+	    // Setup Kafka MockConsumer
+	    kafkaConsumer.rebalance(Collections.singletonList(new TopicPartition(topic, 0)));
+	    kafkaConsumer.seek(new TopicPartition(topic, 0), 0);
+//	    runnableConsumer.assign(topic, Arrays.asList(0));
 
 	    // Create record
-	    offset = 0;
+	    generateSampleJson(kafkaConsumer, topic);
+/*	    offset = 0;
 		ResourceHelper.processResource("com/skp/logmetric/access.log", new LineReadCallback() {
 			@Override
 			public void processLine(String line) {
@@ -115,18 +110,11 @@ public class ConsumerTest {
 	    				offset++, "mykey", produceJson("web01", line)));
 			}
 
-		});
+		}); */
 
 	    // Consume
 	    runnableConsumer.consume();
 	}
-	
-	private String produceJson(String host, String line) {
-		JSONObject j = new JSONObject();
-		j.put("host", host);
-		j.put("log",  line);
-		return j.toString();
-	} 
 	
 	/*
 	 * Logstash grok pattern: (https://github.com/elastic/logstash/blob/v1.4.2/patterns/grok-patterns)
@@ -167,18 +155,13 @@ public class ConsumerTest {
 		Config config = Config.create(input);
 		
 	    // Setup consumer
-		String topic = "my_topic";
-	    LogProcess consumer = new LogProcess(1, kafkaConsumer, config);
-	    consumer.init();
-	    consumer.assign(topic, Arrays.asList(0));
-	    
-	    // Set topic offset
-	    HashMap<TopicPartition, Long> beginningOffsets = new HashMap<>();
-	    beginningOffsets.put(new TopicPartition(topic, 0), 0L);
-	    kafkaConsumer.updateBeginningOffsets(beginningOffsets);
+	    ProcessProcessor pprocessor = new ProcessProcessor(1, kafkaConsumer, config);
+	    pprocessor.init();
+	    pprocessor.assign(topic, Arrays.asList(0));
 
 	    // Create record
-	    offset = 0;
+	    generateSampleJson(kafkaConsumer, topic);
+/*	    offset = 0;
 		ResourceHelper.processResource("com/skp/logmetric/access.log", new LineReadCallback() {
 			@Override
 			public void processLine(String line) {
@@ -188,15 +171,37 @@ public class ConsumerTest {
 	    				offset++, "mykey", produceJson("web02", line)));
 			}
 
-		});
+		}); */
 
 	    // Consume
-	    consumer.consume();
+	    pprocessor.consume();
 
 	    // Export
 	    ProcessMetricsService service = new ProcessMetricsService();
 	    service.export(0);
 	    service.export(0);
+	}
+	
+	static long offset;
+	public static void generateSampleJson(MockConsumer<String, String> kafkaConsumer, String topic) {
+	    // Create record
+	    offset = 0;
+		ResourceHelper.processResource("com/skp/logmetric/access.log", new LineReadCallback() {
+			@Override
+			public void processLine(String line) {
+				kafkaConsumer.addRecord(new ConsumerRecord<String, String>(topic, 0, 
+	    				offset++, "mykey", produceJson("web01", line)));
+				kafkaConsumer.addRecord(new ConsumerRecord<String, String>(topic, 0, 
+	    				offset++, "mykey", produceJson("web02", line)));
+			}
+		});
+	}
+
+	public static String produceJson(String host, String line) {
+		JSONObject j = new JSONObject();
+		j.put("host", host);
+		j.put("log",  line);
+		return j.toString();
 	}
 
 }

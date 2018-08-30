@@ -15,11 +15,20 @@ import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.skp.util.ResourceHelper;
+import com.skp.util.ResourceHelper.LineReadCallback;
+
+import lombok.Data;
+
+@Data
 public class GeneralConsumer implements Runnable {
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	private final int id;
-	private final Consumer<String, String> kafkaConsumer;
-	private ConsumerCallback callback = null;
+	Consumer<String, String> kafkaConsumer;
+	ConsumerCallback callback = null;
 	
     public interface ConsumerCallback {
     	void consume(int id, ConsumerRecords<String, String> records);
@@ -79,7 +88,7 @@ public class GeneralConsumer implements Runnable {
 				consume();
 			}
 		} catch (WakeupException e) {
-			// ignore for shutdown 
+			logger.error(e.toString()); 
 		} finally {
 			kafkaConsumer.close();
 		}

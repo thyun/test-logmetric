@@ -16,7 +16,7 @@ import com.skp.logmetric.config.ConfigProcess;
 import com.skp.logmetric.config.ConfigItem;
 import com.skp.logmetric.event.LogEvent;
 
-public class LogProcess implements Runnable {
+public class ProcessProcessor implements Runnable {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	private final int id;
@@ -26,7 +26,7 @@ public class LogProcess implements Runnable {
 	ProcessDate processDate = new ProcessDate();
 	ProcessMetrics processMetrics = new ProcessMetrics();
 	
-	public LogProcess(int id, Consumer<String, String> consumer, Config config) {
+	public ProcessProcessor(int id, Consumer<String, String> consumer, Config config) {
 		this.id = id;
 		this.consumer = consumer;
 		this.config = config;

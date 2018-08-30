@@ -14,23 +14,43 @@ import com.skp.logmetric.config.ConfigItem;
 import com.skp.logmetric.input.kafka.ConfigInputKafka;
 import com.skp.logmetric.input.kafka.InputKafka;
 
-public class InputProcess {
+import lombok.Data;
+
+@Data
+public class InputProcessor {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	private final Config config;
 	ArrayList<InputPlugin> inputPluginList = new ArrayList<>();
+//	ExecutorService executor;
 	
-	public InputProcess(Config config) {
+	public InputProcessor(Config config) {
 		this.config = config;
 	}
 	
 	public void init() {
 		addPlugin();
-		int count = inputPluginList.size();
-		ExecutorService executor = Executors.newFixedThreadPool(count);
 		for (InputPlugin ip: inputPluginList) {
-			executor.submit(ip);
+			ip.init();
 		}
+	}
+	
+	public void start() {
+		for (InputPlugin ip: inputPluginList) {
+			ip.start();
+		}
+//		int count = inputPluginList.size();
+//		executor = Executors.newFixedThreadPool(count);
+//		for (InputPlugin ip: inputPluginList) {
+//			executor.submit(ip);
+//		}
+	}
+	
+	public void stop() {
+		for (InputPlugin ip: inputPluginList) {
+			ip.stop();
+		}
+//		executor.shutdown();
 	}
 
 	private void addPlugin() {
