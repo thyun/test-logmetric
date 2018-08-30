@@ -25,8 +25,6 @@ import com.skp.util.ResourceHelper;
 
 public class InputProcessorTest {
 	private static final Logger logger = LoggerFactory.getLogger(InputProcessorTest.class);
-//	MockConsumer<String, String> kafkaConsumer;
-//	String topic = "my_topic";
 	
 	@Before
 	public void setUp() {
@@ -42,32 +40,25 @@ public class InputProcessorTest {
 	    InputProcessor iprocess = new InputProcessor(config);
 	    iprocess.init();
 	    
-	    // Get InputKafka
+	    // Get InputKafka & GeneralConsumer
 	    InputKafka inputKafka = (InputKafka) iprocess.getInputPluginList().get(0);	// Assume 1 input plugin
+	    GeneralConsumer gconsumer = inputKafka.getConsumerList().get(0);		// Assume 1 GeneralConsumer
 	    String topic = inputKafka.getConfig().getTopic();
 	    
-	    // Apply MockConsumer
-	    MockConsumer<String, String> mockConsumer = createMockConsumer(topic);
-	    GeneralConsumer gconsumer = inputKafka.getConsumerList().get(0);		// Assume 1 GeneralConsumer
-	    gconsumer.setKafkaConsumer(mockConsumer);
-	    gconsumer.subscribe(Arrays.asList(topic));
-	    mockConsumer.rebalance(Collections.singletonList(new TopicPartition(topic, 0)));
-	    mockConsumer.seek(new TopicPartition(topic, 0), 0);
+	    // Apply MockConsumer 
+	    MockConsumer<String, String> mockConsumer = createMockConsumer();
+	    gconsumer.applyMockConsumer(mockConsumer, topic);
 	    
-	    // Consume InputKafka
+	    // Generate sample data
 	    GeneralConsumerTest.generateSampleJson(mockConsumer, topic);
+	    
+	    // Consume
 	    gconsumer.consume();
 	    assertEquals(200, ProcessQueue.getInstance().size());
 	}
 
-	private MockConsumer<String, String> createMockConsumer(String topic) {
+	private MockConsumer<String, String> createMockConsumer() {
 		MockConsumer<String, String> mockConsumer = new MockConsumer<String, String>(OffsetResetStrategy.EARLIEST);
-	    
-	    // Set topic offset
-	    HashMap<TopicPartition, Long> beginningOffsets = new HashMap<>();
-	    beginningOffsets.put(new TopicPartition(topic, 0), 0L);
-	    mockConsumer.updateBeginningOffsets(beginningOffsets);
-	    
 	    return mockConsumer;
 	}
 

@@ -2,6 +2,7 @@ package com.skp.logmetric;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.MockConsumer;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
@@ -108,6 +110,21 @@ public class GeneralConsumer implements Runnable {
 		for (ConsumerRecord<String, String> record : records) {
 			System.out.println("Consumer " + this.id + ": " + "partition=" + record.partition() + ", offset=" + record.offset() + ", value=" + record.value());
 		}
+	}
+
+	// For test
+	public void applyMockConsumer(MockConsumer<String, String> mockConsumer, String topic) {
+	    this.kafkaConsumer = mockConsumer;
+
+	    // Set topic offset
+	    HashMap<TopicPartition, Long> beginningOffsets = new HashMap<>();
+	    beginningOffsets.put(new TopicPartition(topic, 0), 0L);
+	    mockConsumer.updateBeginningOffsets(beginningOffsets);
+	    
+	    // Subscribe & rebalance
+	    subscribe(Arrays.asList(topic));
+	    mockConsumer.rebalance(Collections.singletonList(new TopicPartition(topic, 0)));
+	    mockConsumer.seek(new TopicPartition(topic, 0), 0);
 	}
 
 }
