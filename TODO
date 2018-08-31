@@ -1,5 +1,4 @@
 TODO
-- Process: Queue로부터 처리
 - Input 지원: kafka 0.8
 - MetricStats: range 지원
 - Config process metrics: 다양한 key 지원(host & instance ...), add_field 지원

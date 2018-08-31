@@ -121,10 +121,13 @@ public class GeneralConsumer implements Runnable {
 	    beginningOffsets.put(new TopicPartition(topic, 0), 0L);
 	    mockConsumer.updateBeginningOffsets(beginningOffsets);
 	    
+	    // Assign
+	    assign(topic, Arrays.asList(0));
+	    
 	    // Subscribe & rebalance
-	    subscribe(Arrays.asList(topic));
+/*	    subscribe(Arrays.asList(topic));
 	    mockConsumer.rebalance(Collections.singletonList(new TopicPartition(topic, 0)));
-	    mockConsumer.seek(new TopicPartition(topic, 0), 0);
+	    mockConsumer.seek(new TopicPartition(topic, 0), 0); */
 	}
 
 }

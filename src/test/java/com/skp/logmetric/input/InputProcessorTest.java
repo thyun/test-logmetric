@@ -36,7 +36,7 @@ public class InputProcessorTest {
 		String input = ResourceHelper.getResourceString("process.conf");
 		Config config = Config.create(input);
 		
-	    // Get InputProcess
+	    // Create InputProcessor
 	    InputProcessor iprocess = new InputProcessor(config);
 	    iprocess.init();
 	    
