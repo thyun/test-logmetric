@@ -16,12 +16,12 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.skp.logmetric.GeneralConsumer;
-import com.skp.logmetric.GeneralConsumer.ConsumerCallback;
 import com.skp.logmetric.GeneralConsumerTest;
 import com.skp.logmetric.config.Config;
 import com.skp.logmetric.event.LogEvent;
 import com.skp.logmetric.input.InputProcessor;
+import com.skp.logmetric.input.kafka.GeneralConsumer;
+import com.skp.logmetric.input.kafka.GeneralConsumer.ConsumerCallback;
 import com.skp.logmetric.process.ProcessProcessor;
 import com.skp.logmetric.process.ProcessMetricsService;
 import com.skp.util.ResourceHelper;

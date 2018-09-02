@@ -14,11 +14,11 @@ import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.skp.logmetric.GeneralConsumer;
 import com.skp.logmetric.config.Config;
 import com.skp.logmetric.config.ConfigProcess;
 import com.skp.logmetric.config.ConfigItem;
 import com.skp.logmetric.event.LogEvent;
+import com.skp.logmetric.input.kafka.GeneralConsumer;
 
 public class ProcessProcessor {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());

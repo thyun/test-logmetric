@@ -35,6 +35,8 @@ dependencies {
     compile("org.jolokia:jolokia-core")
     
     // https://mvnrepository.com/artifact/org.apache.kafka/kafka
+    compile group: 'org.apache.kafka', name: 'kafka_2.10', version: '0.8.2.2'
+    compile group: 'org.apache.kafka', name: 'kafka-clients', version: '0.8.2.2'
 //    compile group: 'org.apache.kafka', name: 'kafka_2.11', version: '0.10.2.1'
 	compile group: 'org.apache.kafka', name: 'kafka-clients', version: '0.10.2.1'
     

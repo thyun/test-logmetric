@@ -12,7 +12,8 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.skp.logmetric.GeneralConsumer.ConsumerCallback;
+import com.skp.logmetric.input.kafka.GeneralConsumer;
+import com.skp.logmetric.input.kafka.GeneralConsumer.ConsumerCallback;
 
 /*
  * https://www.confluent.io/blog/tutorial-getting-started-with-the-new-apache-kafka-0-9-consumer-client/

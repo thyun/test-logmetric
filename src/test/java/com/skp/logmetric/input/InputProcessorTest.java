@@ -16,9 +16,9 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.skp.logmetric.GeneralConsumer;
 import com.skp.logmetric.GeneralConsumerTest;
 import com.skp.logmetric.config.Config;
+import com.skp.logmetric.input.kafka.GeneralConsumer;
 import com.skp.logmetric.input.kafka.InputKafka;
 import com.skp.logmetric.process.ProcessQueue;
 import com.skp.util.ResourceHelper;

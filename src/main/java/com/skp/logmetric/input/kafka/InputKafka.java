@@ -12,10 +12,9 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.skp.logmetric.GeneralConsumer;
-import com.skp.logmetric.GeneralConsumer.ConsumerCallback;
 import com.skp.logmetric.event.LogEvent;
 import com.skp.logmetric.input.InputPlugin;
+import com.skp.logmetric.input.kafka.GeneralConsumer.ConsumerCallback;
 import com.skp.logmetric.process.ProcessQueue;
 
 import lombok.Data;

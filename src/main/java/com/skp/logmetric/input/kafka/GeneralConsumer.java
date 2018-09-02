@@ -1,4 +1,4 @@
-package com.skp.logmetric;
+package com.skp.logmetric.input.kafka;
 
 import java.util.ArrayList;
 import java.util.Arrays;
