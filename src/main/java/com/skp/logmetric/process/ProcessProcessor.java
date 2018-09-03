@@ -33,6 +33,7 @@ public class ProcessProcessor {
 	class ProcessConsumer implements Runnable {
 		@Override
 		public void run() {
+			logger.debug("ProcessConsumer.run() start");
 			while (true) {
 				process();
 			}
@@ -47,6 +48,9 @@ public class ProcessProcessor {
 	public void init() {
 		int numConsumers = 1;
         executor = Executors.newFixedThreadPool(numConsumers);
+        for (int i=0; i<numConsumers; i++) {
+        	consumerList.add(new ProcessConsumer());
+        }
 	}
 	
 	public void start() {
@@ -80,6 +84,7 @@ public class ProcessProcessor {
 	} */
 	
 	private void process(Config config, LogEvent e) {
+		logger.debug("process() start");
 		
 		ConfigProcess configProcess = config.getConfigProcess();
 		List<ConfigItem> configProcessList = configProcess.getConfigProcessList();

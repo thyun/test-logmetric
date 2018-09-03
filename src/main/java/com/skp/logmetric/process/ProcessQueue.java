@@ -1,10 +1,14 @@
 package com.skp.logmetric.process;
 
+import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.skp.logmetric.event.LogEvent;
 
+import lombok.Data;
+
+@Data
 public class ProcessQueue extends LinkedBlockingQueue<LogEvent> {
 	final static int QUEUE_SIZE = 1000;
 	static ProcessQueue processQueue = null;
@@ -21,5 +25,14 @@ public class ProcessQueue extends LinkedBlockingQueue<LogEvent> {
 		return processQueue;
 	}
 	
-
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("ProcessQueue: ");
+		Iterator<LogEvent> it = this.iterator();
+		while (it.hasNext()) {
+			LogEvent e = it.next();
+			sb.append(" " + e);
+		}
+		return sb.toString();
+	}
 }

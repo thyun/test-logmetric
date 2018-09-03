@@ -106,11 +106,11 @@ public class GeneralConsumer implements Runnable {
 			callback.consume(this.id, records);
 	}
 	
-	private void process(ConsumerRecords<String, String> records) {
+/*	private void process(ConsumerRecords<String, String> records) {
 		for (ConsumerRecord<String, String> record : records) {
 			System.out.println("Consumer " + this.id + ": " + "partition=" + record.partition() + ", offset=" + record.offset() + ", value=" + record.value());
 		}
-	}
+	} */
 
 	// For test
 	public void applyMockConsumer(MockConsumer<String, String> mockConsumer, String topic) {

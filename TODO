@@ -1,5 +1,6 @@
 TODO
-- Input 지원: kafka 0.8
+- ProcessMetrics export를 위한 key로 @timestamp가 포함되어야 함.
+- ProcessQueue multiple LogEvent 한 덩어리로 처리
 - MetricStats: range 지원
 - Config process metrics: 다양한 key 지원(host & instance ...), add_field 지원
 - Output 지원

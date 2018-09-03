@@ -9,11 +9,10 @@
 	    </layout>
 	</appender>
 	
-<!-- 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-	    <file>demo.log</file>
+	    <file>logmetric.log</file>
 	    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-	      <fileNamePattern>demo.log.%d{yyyy-MM-dd}</fileNamePattern>
+	      <fileNamePattern>logmetric.log.%d{yyyy-MM-dd}</fileNamePattern>
 	      <maxHistory>30</maxHistory>
 	      <totalSizeCap>3GB</totalSizeCap>
 	    </rollingPolicy>
@@ -21,20 +20,19 @@
 	      <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{35} - %msg%n</pattern>
 	    </encoder>
 	</appender> 
--->
 
 	<root level="info">
-<!-- 		<appender-ref ref="FILE" /> -->
+ 		<appender-ref ref="FILE" />
 		<appender-ref ref="STDOUT" />
 	</root>
 	
 	<logger name="org.springframework" level="info" additivity="false">
-<!-- 		<appender-ref ref="FILE" /> -->
+ 		<appender-ref ref="FILE" />
 		<appender-ref ref="STDOUT" />
 	</logger>
 	
 	<logger name="com.skp.logmetric" level="debug" additivity="false">
-<!-- 		<appender-ref ref="FILE" /> -->
+ 		<appender-ref ref="FILE" />
 		<appender-ref ref="STDOUT" />
 	</logger>
 
