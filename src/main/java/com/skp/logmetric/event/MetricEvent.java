@@ -19,14 +19,13 @@ public class MetricEvent extends LogEvent {
 	int sampling;
 	HashMap<String, MetricFieldStats> metricFieldStatsHashMap = new HashMap<>();
 	
-	public MetricEvent(String tkey, String tvalue) {
-		super(tvalue);
-		this.put(tkey, tvalue);
+	public MetricEvent(String lkey) {
+		super();
 		createTime = new Date();
 		updateTime = createTime;
 	}
 
-	public void sampling() {
+	public synchronized void sampling() {
 		sampling++;
 		updateTime = new Date();
 	}
@@ -76,8 +75,11 @@ public class MetricEvent extends LogEvent {
 	}
 	
 	public String toString() {
-		StringBuffer sb = new StringBuffer("MetricEvent");
-		sb.append(" key=" + this.getKey());
+		StringBuffer sb = new StringBuffer();
+		sb.append("MetricEvent ");
+		sb.append(export());
+/*		
+//		sb.append(" key=" + this.getKey());
 		sb.append(" sampling=" + this.getSampling());
 		
 		Iterator<String> it = this.keys();
@@ -89,7 +91,7 @@ public class MetricEvent extends LogEvent {
 		for (MetricFieldStats ms: metricFieldStatsHashMap.values()) {
 			sb.append(" ");
 			sb.append(ms.toString());
-		}
+		} */
 		return sb.toString();
 	}
 

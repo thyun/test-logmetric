@@ -1,9 +1,12 @@
 package com.skp.logmetric.process;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.MockConsumer;
@@ -29,17 +32,9 @@ import com.skp.util.ResourceHelper.LineReadCallback;
 
 public class ProcessProcessorTest {
 	private static final Logger logger = LoggerFactory.getLogger(ProcessProcessorTest.class);
-//	static String topic = "my_topic";
-//	MockConsumer<String, String> kafkaConsumer;
 	
 	@Before
 	public void setUp() {
-/*	    kafkaConsumer = new MockConsumer<String, String>(OffsetResetStrategy.EARLIEST);
-	    
-	    // Set topic offset
-	    HashMap<TopicPartition, Long> beginningOffsets = new HashMap<>();
-	    beginningOffsets.put(new TopicPartition(topic, 0), 0L);
-	    kafkaConsumer.updateBeginningOffsets(beginningOffsets);  */
 	}
 	
 	/*
@@ -95,27 +90,6 @@ public class ProcessProcessorTest {
 		ProcessMetricsService service = new ProcessMetricsService();
 	    service.export(0);
 	    service.export(0);
-				
-		/*
-		// Get config
-		String input = ResourceHelper.getResourceString("process.conf");
-		Config config = Config.create(input);
-		
-	    // Setup consumer
-	    ProcessProcessor pprocessor = new ProcessProcessor(1, kafkaConsumer, config);
-	    pprocessor.init();
-	    pprocessor.assign(topic, Arrays.asList(0));
-
-	    // Create record
-	    GeneralConsumerTest.generateSampleJson(kafkaConsumer, topic);
-
-	    // Consume
-	    pprocessor.consume();
-
-	    // Export
-	    ProcessMetricsService service = new ProcessMetricsService();
-	    service.export(0);
-	    service.export(0); */
 	}
 	
 	static long offset;
@@ -125,8 +99,12 @@ public class ProcessProcessorTest {
 			@Override
 			public void processLine(String line) {
 				try {
-					ProcessQueue.getInstance().put(createLogEvent("mykey", produceJson("web01", line)));
-					ProcessQueue.getInstance().put(createLogEvent("mykey", produceJson("web02", line)));
+					List<LogEvent> elist1 = createLogEventList(produceJson("web01", line));
+					List<LogEvent> elist2 = createLogEventList(produceJson("web02", line));
+					ProcessQueueBulk.getInstance().put(elist1);
+					ProcessQueueBulk.getInstance().put(elist2);
+//					ProcessQueue.getInstance().put(createLogEvent(produceJson("web01", line)));
+//					ProcessQueue.getInstance().put(createLogEvent(produceJson("web02", line)));
 				} catch (InterruptedException e) {
 					logger.error(e.toString());
 				}
@@ -134,9 +112,15 @@ public class ProcessProcessorTest {
 		});
 	}
 	
-	private static LogEvent createLogEvent(String key, String value) {
-		return LogEvent.parse(key, value);
+	protected static List<LogEvent> createLogEventList(String value) {
+		ArrayList<LogEvent> elist = new ArrayList<>();
+		elist.add(LogEvent.parse(value));
+		return elist;
 	}
+
+/*	private static LogEvent createLogEvent(String value) {
+		return LogEvent.parse(value);
+	} */
 
 	private static String produceJson(String host, String line) {
 		JSONObject j = new JSONObject();

@@ -64,8 +64,11 @@ public class ProcessProcessor {
 
 	public void process() {
 		try {
-			LogEvent e = ProcessQueue.getInstance().take();
-			process(config, e);
+			List<LogEvent> elist = ProcessQueueBulk.getInstance().take();
+			for (LogEvent e: elist)
+				process(config, e);
+//			LogEvent e = ProcessQueue.getInstance().take();
+//			process(config, e);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

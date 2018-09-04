@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import com.skp.logmetric.event.LogEvent;
 import com.skp.logmetric.input.InputPlugin;
 import com.skp.logmetric.input.kafka.GeneralConsumer08.ConsumerCallback08;
-import com.skp.logmetric.process.ProcessQueue;
+import com.skp.logmetric.process.ProcessQueueBulk;
 
 import kafka.consumer.ConsumerConfig;
 import kafka.consumer.KafkaStream;
@@ -82,19 +82,36 @@ public class InputKafka08 implements InputPlugin {
 	}
 	
 	private void process(int id, List<String> records) {
-		for (String record : records) {
+		try {
+			List<LogEvent> elist = createLogEventList(records);
+			ProcessQueueBulk.getInstance().put(elist);
+			for (LogEvent e: elist) 
+				logger.debug("Input kafka08 " + e);
+		} catch (InterruptedException e) {
+			logger.error(e.toString());
+		}
+
+/*		for (String record : records) {
 			logger.debug("Consumer " + id + ": " + ", value=" + record);
 			try {
-				ProcessQueue.getInstance().put(createLogEvent("Unknown", record));
+				ProcessQueue.getInstance().put(createLogEvent(record));
 			} catch (InterruptedException e) {
 				logger.error(e.toString());
 			}
-		}
+		} */
 	}
 
-	private LogEvent createLogEvent(String key, String value) {
-		return LogEvent.parse(key, value);
+	private List<LogEvent> createLogEventList(List<String> records) {
+		ArrayList<LogEvent> elist = new ArrayList<>();
+		for (String record: records) {
+			elist.add(LogEvent.parse(record));
+		}
+		return elist;
 	}
+
+/*	private LogEvent createLogEvent(String value) {
+		return LogEvent.parse(value);
+	} */
 
     private static ConsumerConfig createConsumerConfig(String a_zookeeper, String a_groupId) {
         Properties props = new Properties();

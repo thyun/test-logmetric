@@ -8,14 +8,13 @@ import java.util.concurrent.Executors;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.skp.logmetric.event.LogEvent;
 import com.skp.logmetric.input.InputPlugin;
 import com.skp.logmetric.input.kafka.GeneralConsumer.ConsumerCallback;
-import com.skp.logmetric.process.ProcessQueue;
+import com.skp.logmetric.process.ProcessQueueBulk;
 
 import lombok.Data;
 
@@ -59,19 +58,36 @@ public class InputKafka implements InputPlugin {
 	}
 	
 	private void process(int id, ConsumerRecords<String, String> records) {
-		for (ConsumerRecord<String, String> record : records) {
-			logger.debug("Consumer " + id + ": " + "partition=" + record.partition() + ", offset=" + record.offset() + ", value=" + record.value());
+		try {
+			List<LogEvent> elist = createLogEventList(records);
+			ProcessQueueBulk.getInstance().put(elist);
+			for (LogEvent e: elist) 
+				logger.debug("Input kafka " + e);
+		} catch (InterruptedException e) {
+			logger.error(e.toString());
+		}
+		
+/*		for (ConsumerRecord<String, String> record : records) {
+			logger.debug("Consumer " + id + ": " + "partition=" + record.partition() + ", offset=" + record.offset() + ", key=" + record.key() + ", value=" + record.value());
 			try {
-				ProcessQueue.getInstance().put(createLogEvent(record.key(), record.value()));
+				ProcessQueue.getInstance().put(createLogEvent(record.value()));
 			} catch (InterruptedException e) {
 				logger.error(e.toString());
 			}
-		}
+		} */
 	}
 
-	private LogEvent createLogEvent(String key, String value) {
-		return LogEvent.parse(key, value);
+	private List<LogEvent> createLogEventList(ConsumerRecords<String, String> records) {
+		ArrayList<LogEvent> elist = new ArrayList<>();
+		for (ConsumerRecord<String, String> record: records) {
+			elist.add(LogEvent.parse(record.value()));
+		}
+		return elist;
 	}
+
+/*	private LogEvent createLogEvent(String value) {
+		return LogEvent.parse(value);
+	} */
 
 	@Override
 	public void run() {

@@ -44,7 +44,7 @@ public class ProcessMatch {
 			sb.append(" " + pos + "=" + m.group(pos));
 		}
 		logger.debug(sb.toString());
-		logger.debug("Process match output:" + e.toString());
+		logger.debug("Process match output: " + e.toString());
 		return true;
 	}
 

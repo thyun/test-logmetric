@@ -11,13 +11,13 @@ public class ResourceHelperTest {
 	
 	@Test
 	public void testGetResource() throws IOException {
-		String log = ResourceHelper.getResourceString("com/skp/testkafka/access.log");
+		String log = ResourceHelper.getResourceString("com/skp/logmetric/access.log");
 		System.out.println("access.log=" + log);
 	}
 	
 	@Test
 	public void testProcessResource() throws IOException {
-		ResourceHelper.processResource("com/skp/testkafka/access.log", new LineReadCallback() {
+		ResourceHelper.processResource("com/skp/logmetric/access.log", new LineReadCallback() {
 			@Override
 			public void processLine(String line) {
 				System.out.println("line=" + line);

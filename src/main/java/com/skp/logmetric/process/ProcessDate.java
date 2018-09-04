@@ -29,6 +29,7 @@ public class ProcessDate {
 			logger.error(CommonHelper.exception2Str(ex));
 			return false;
 		}
+		logger.debug("Process date output: " + e.toString());
 		return true;
 	}
 

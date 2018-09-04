@@ -3,13 +3,10 @@ package com.skp.logmetric.input;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.List;
 
 import org.apache.kafka.clients.consumer.MockConsumer;
 import org.apache.kafka.clients.consumer.OffsetResetStrategy;
-import org.apache.kafka.common.TopicPartition;
 import org.json.simple.parser.ParseException;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +19,7 @@ import com.skp.logmetric.event.LogEvent;
 import com.skp.logmetric.input.kafka.GeneralConsumer;
 import com.skp.logmetric.input.kafka.InputKafka;
 import com.skp.logmetric.input.kafka.InputKafka08;
-import com.skp.logmetric.process.ProcessQueue;
+import com.skp.logmetric.process.ProcessQueueBulk;
 import com.skp.util.ResourceHelper;
 
 public class InputProcessorTest {
@@ -30,10 +27,11 @@ public class InputProcessorTest {
 	
 	@Before
 	public void setUp() {
+		ProcessQueueBulk.getInstance().clear();
 	}
 	
 	@Test
-	public void testInputProcess() throws IOException, ParseException, InterruptedException {
+	public void testInputKafka() throws IOException, ParseException, InterruptedException {
 		// Get config
 		String input = ResourceHelper.getResourceString("process.conf");
 		Config config = Config.create(input);
@@ -56,7 +54,8 @@ public class InputProcessorTest {
 	    
 	    // Consume
 	    gconsumer.consume();
-	    assertEquals(200, ProcessQueue.getInstance().size());
+	    List<LogEvent> elist = ProcessQueueBulk.getInstance().take();
+	    assertEquals(200, elist.size());
 	}
 
 	private MockConsumer<String, String> createMockConsumer() {
@@ -65,7 +64,7 @@ public class InputProcessorTest {
 	}
 	
 	@Test
-	public void testInputProcessInputKafka08() throws IOException, ParseException, InterruptedException {
+	public void testInputKafka08() throws IOException, ParseException, InterruptedException {
 		// Get config
 		String input = ResourceHelper.getResourceString("process08.conf");
 		Config config = Config.create(input);
@@ -90,9 +89,10 @@ public class InputProcessorTest {
 	    iprocess.start();
 	    Thread.sleep(5000);
 	    iprocess.stop();
-	    logger.debug("ProcessQueue size=" + ProcessQueue.getInstance().size());
-	    LogEvent e = ProcessQueue.getInstance().take();
-	    logger.debug("e=" + e);
+	    logger.debug("ProcessQueue size=" + ProcessQueueBulk.getInstance().size());
+	    List<LogEvent> elist = ProcessQueueBulk.getInstance().take();
+	    for (LogEvent e: elist)
+	    	logger.debug("e=" + e);
 //	    gconsumer.consume();
 //	    assertEquals(200, ProcessQueue.getInstance().size());
 	}

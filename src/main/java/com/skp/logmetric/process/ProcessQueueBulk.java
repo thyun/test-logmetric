@@ -1,6 +1,7 @@
 package com.skp.logmetric.process;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -9,18 +10,17 @@ import com.skp.logmetric.event.LogEvent;
 import lombok.Data;
 
 @Data
-public class ProcessQueue extends LinkedBlockingQueue<LogEvent> {
+public class ProcessQueueBulk extends LinkedBlockingQueue<List<LogEvent>> {
 	final static int QUEUE_SIZE = 1000;
-	static ProcessQueue processQueue = null;
-//	BlockingQueue<LogEvent> queue = new LinkedBlockingQueue<>(QUEUE_SIZE);
+	static ProcessQueueBulk processQueue = null;
 	
-	public ProcessQueue(int queueSize) {
+	public ProcessQueueBulk(int queueSize) {
 		super(queueSize);
 	}
 
-	public static ProcessQueue getInstance() {
+	public static ProcessQueueBulk getInstance() {
 		if (processQueue == null) {
-			processQueue = new ProcessQueue(QUEUE_SIZE);
+			processQueue = new ProcessQueueBulk(QUEUE_SIZE);
 		}
 		return processQueue;
 	}
@@ -28,10 +28,12 @@ public class ProcessQueue extends LinkedBlockingQueue<LogEvent> {
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("ProcessQueue: ");
-		Iterator<LogEvent> it = this.iterator();
+		Iterator<List<LogEvent>> it = this.iterator();
 		while (it.hasNext()) {
-			LogEvent e = it.next();
-			sb.append(" " + e);
+			List<LogEvent> elist = it.next();
+			for (LogEvent e: elist)
+				sb.append(" " + e);
+			sb.append("\n");
 		}
 		return sb.toString();
 	}

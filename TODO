@@ -1,10 +1,10 @@
 TODO
-- ProcessMetrics export를 위한 key로 @timestamp가 포함되어야 함.
-- ProcessQueue multiple LogEvent 한 덩어리로 처리
-- MetricStats: range 지원
-- Config process metrics: 다양한 key 지원(host & instance ...), add_field 지원
+- ProcessMetrics: nxtime 등 빠지는 field 추가
 - Output 지원
+- MetricStats: range 지원
+- Metrics: Multiple key 지원(host & instance ...)
 - Stream 처리
 - LogType 지원
+- add_field 지원
 
 DONE
