@@ -118,13 +118,12 @@ public class ProcessProcessorTest {
 		return elist;
 	}
 
-/*	private static LogEvent createLogEvent(String value) {
-		return LogEvent.parse(value);
-	} */
-
 	private static String produceJson(String host, String line) {
 		JSONObject j = new JSONObject();
-		j.put("host", host);
+		j.put("hostname", host);
+		j.put("nxtime", 1536298656382L);
+		j.put("logInstance", "Anvil");
+		j.put("sourceType", "pmon-accesslog");
 		j.put("log",  line);
 		return j.toString();
 	}

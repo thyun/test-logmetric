@@ -92,7 +92,7 @@ public class InputProcessorTest {
 	    logger.debug("ProcessQueue size=" + ProcessQueueBulk.getInstance().size());
 	    List<LogEvent> elist = ProcessQueueBulk.getInstance().take();
 	    for (LogEvent e: elist)
-	    	logger.debug("e=" + e);
+	    	logger.debug("ProcessQueue first input: " + e);
 //	    gconsumer.consume();
 //	    assertEquals(200, ProcessQueue.getInstance().size());
 	}

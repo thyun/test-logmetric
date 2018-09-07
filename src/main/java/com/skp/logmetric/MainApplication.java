@@ -12,6 +12,7 @@ import org.springframework.context.ApplicationContext;
 
 import com.skp.logmetric.config.Config;
 import com.skp.logmetric.input.InputProcessor;
+import com.skp.logmetric.output.OutputProcessor;
 import com.skp.logmetric.process.ProcessProcessor;
 import com.skp.util.ResourceHelper;
 
@@ -21,6 +22,7 @@ public class MainApplication {
 	Config config;
 	InputProcessor iprocessor;
 	ProcessProcessor pprocessor;
+	OutputProcessor oprocessor;
 		
 	public static void main(String[] args) {
         ApplicationContext ctx = SpringApplication.run(MainApplication.class, args);
@@ -43,20 +45,31 @@ public class MainApplication {
 		config = Config.create(input);
 		
 		// Start
-		startInput();
+		startOutput();
 		startProcess();
+		startInput();
+
 	}
 
 	private void startInput() {
-		InputProcessor iprocess = new InputProcessor(config);
-	    iprocess.init();
-		iprocess.start();
+		iprocessor = new InputProcessor(config);
+	    iprocessor.init();
+		iprocessor.start();
 	}
 
 	private void startProcess() {
 		// Create ProcessProcessor
-	    ProcessProcessor pprocess = new ProcessProcessor(config);
-	    pprocess.init();
-		pprocess.start();
+	    pprocessor = new ProcessProcessor(config);
+	    pprocessor.init();
+		pprocessor.start();
+		pprocessor.setOutputProcessor(oprocessor);
+
+	}
+	
+	private void startOutput() {
+		// Create OutputProcessor
+		oprocessor = new OutputProcessor(config);
+		oprocessor.init();
+		oprocessor.start();
 	}
 }

@@ -24,7 +24,6 @@ public class InputProcessor {
 	
 	private final Config config;
 	ArrayList<InputPlugin> inputPluginList = new ArrayList<>();
-//	ExecutorService executor;
 	
 	public InputProcessor(Config config) {
 		this.config = config;

@@ -19,7 +19,11 @@ import com.skp.logmetric.config.ConfigProcess;
 import com.skp.logmetric.config.ConfigItem;
 import com.skp.logmetric.event.LogEvent;
 import com.skp.logmetric.input.kafka.GeneralConsumer;
+import com.skp.logmetric.output.OutputProcessor;
 
+import lombok.Data;
+
+@Data
 public class ProcessProcessor {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
@@ -29,6 +33,7 @@ public class ProcessProcessor {
 	ProcessMetrics processMetrics = new ProcessMetrics();
 	List<ProcessConsumer> consumerList = new ArrayList<>();
 	ExecutorService executor;
+	OutputProcessor outputProcessor;
 	
 	class ProcessConsumer implements Runnable {
 		@Override
@@ -63,31 +68,25 @@ public class ProcessProcessor {
 	}
 
 	public void process() {
+		ArrayList<LogEvent> outList = new ArrayList<>();
 		try {
 			List<LogEvent> elist = ProcessQueueBulk.getInstance().take();
-			for (LogEvent e: elist)
-				process(config, e);
-//			LogEvent e = ProcessQueue.getInstance().take();
-//			process(config, e);
+			for (LogEvent e: elist) {
+				LogEvent out = process(config, e);
+				if (out != null)
+					outList.add(out);
+			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		
+		if (outputProcessor != null && outList.size() > 0)
+			outputProcessor.put(outList);
 	}
 	
-/*	private void process(ConsumerRecords<String, String> records) {
-		for (ConsumerRecord<String, String> record : records) {
-//			System.out.println("Consumer " + this.id + ": " + "partition=" + record.partition() + ", offset=" + record.offset() + ", value=" + record.value());
-			try {
-				LogEvent e = LogEvent.parse(record.key(), record.value());
-				process(config, e);
-			} catch (JSONException e) {
-				logger.error("LogConsumer.process() exception: " + e);
-			}
-		}
-	} */
-	
-	private void process(Config config, LogEvent e) {
+	private LogEvent process(Config config, LogEvent e) {
 		logger.debug("process() start");
+		LogEvent out=e;
 		
 		ConfigProcess configProcess = config.getConfigProcess();
 		List<ConfigItem> configProcessList = configProcess.getConfigProcessList();
@@ -99,12 +98,15 @@ public class ProcessProcessor {
 			if (item instanceof ConfigProcessDate)
 				r = processDate.process((ConfigProcessDate) item, e);
 			
-			if (item instanceof ConfigProcessMetrics)
+			if (item instanceof ConfigProcessMetrics) {
 				r = processMetrics.process((ConfigProcessMetrics) item, e);
+//				out = null;
+			}
 			
 //			if (r != true)
 //				return;
 		}
+		return out;
 		
 	}
 
