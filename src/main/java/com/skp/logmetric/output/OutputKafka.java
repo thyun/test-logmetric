@@ -1,39 +1,64 @@
 package com.skp.logmetric.output;
 
-import com.skp.logmetric.input.InputPlugin;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.skp.logmetric.event.LogEvent;
 
 import lombok.Data;
 
 @Data
 public class OutputKafka implements OutputPlugin {
-	OutputQueue outputQueue;
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	ConfigOutputKafka config;
+	ExecutorService executor;
+	OutputQueue outputQueue = new OutputQueue();
 
 	public OutputKafka(ConfigOutputKafka config) {
-		// TODO Auto-generated constructor stub
+		this.config = config;
 	}
 
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
+		while (true)
+			process();
+	}
+
+	private void process() {
+		try {
+			List<LogEvent> elist = outputQueue.take();
+			for (LogEvent e: elist)
+				process(config, e);
+		} catch (InterruptedException ex) {
+			ex.printStackTrace();
+		} 
+	}
+
+	private void process(ConfigOutputKafka config, LogEvent e) {
+		logger.debug("output kafka: " + e);
 
 	}
 
 	@Override
 	public void init() {
-		// TODO Auto-generated method stub
+		int numConsumers = 1;
+        executor = Executors.newFixedThreadPool(numConsumers);
 
 	}
 
 	@Override
 	public void start() {
-		// TODO Auto-generated method stub
+		executor.submit(this);
 
 	}
 
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
-
+		executor.shutdown();
 	}
 
 }

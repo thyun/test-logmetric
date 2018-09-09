@@ -50,7 +50,8 @@ public class OutputFile implements OutputPlugin {
 	private void process(ConfigOutputFile config, LogEvent e) {
 		logger.debug("output file: " + e);
 		try {
-			writer.write(e.toString() + "\n");
+			writer.write(e.toString());
+			writer.write("\n");
 		} catch (IOException ex) {
 			// TODO Auto-generated catch block
 			ex.printStackTrace();
