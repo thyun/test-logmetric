@@ -95,7 +95,7 @@ public class ProcessProcessorTest {
 	static long offset;
 	public static void generateSampleJson() {
 	    offset = 0;
-		ResourceHelper.processResource("com/skp/logmetric/access.log", new LineReadCallback() {
+		ResourceHelper.processResource("access.log", new LineReadCallback() {
 			@Override
 			public void processLine(String line) {
 				try {
@@ -120,7 +120,7 @@ public class ProcessProcessorTest {
 
 	private static String produceJson(String host, String line) {
 		JSONObject j = new JSONObject();
-		j.put("hostname", host);
+		j.put("host", host);
 		j.put("nxtime", 1536298656382L);
 		j.put("logInstance", "Anvil");
 		j.put("sourceType", "pmon-accesslog");

@@ -14,6 +14,11 @@ import com.skp.logmetric.config.ConfigInput;
 import com.skp.logmetric.config.ConfigItem;
 import com.skp.logmetric.config.ConfigOutput;
 import com.skp.logmetric.event.LogEvent;
+import com.skp.logmetric.event.MetricEvent;
+import com.skp.logmetric.output.kafka.ConfigOutputKafka;
+import com.skp.logmetric.output.kafka.ConfigOutputKafka08;
+import com.skp.logmetric.output.kafka.OutputKafka;
+import com.skp.logmetric.output.kafka.OutputKafka08;
 
 import lombok.Data;
 

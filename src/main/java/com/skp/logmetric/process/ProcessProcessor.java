@@ -100,7 +100,7 @@ public class ProcessProcessor {
 			
 			if (item instanceof ConfigProcessMetrics) {
 				r = processMetrics.process((ConfigProcessMetrics) item, e);
-//				out = null;
+				out = null;
 			}
 			
 //			if (r != true)

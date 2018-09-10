@@ -10,8 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class MetricEvent extends LogEvent {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	Date createTime;
@@ -74,9 +75,13 @@ public class MetricEvent extends LogEvent {
 		return j.toString();
 	}
 	
+	public LogEvent toLogEvent() {
+		return new LogEvent(toString());
+	}
+	
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		sb.append("MetricEvent ");
+//		sb.append("MetricEvent ");
 		sb.append(export());
 /*		
 //		sb.append(" key=" + this.getKey());

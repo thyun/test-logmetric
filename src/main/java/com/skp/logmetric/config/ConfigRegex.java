@@ -9,8 +9,9 @@ import com.skp.logmetric.event.KeyValue;
 import com.skp.util.ResourceHelper;
 
 import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class ConfigRegex extends HashMap<String, String> {
 	private static final long serialVersionUID = 1L;
 	public final static String DELIMITER = "=";

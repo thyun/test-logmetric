@@ -1,6 +1,6 @@
 TODO
-- ProcessMetricsService output
-- Kafka output
+- Graceful shutdown (Ctrl+C shutdown)
+- Filebeat 연동 테스트
 - MetricStats: range 지원
 - Metrics: Multiple key 지원(host & instance ...)
 - Stream 처리

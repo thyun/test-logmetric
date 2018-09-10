@@ -46,7 +46,7 @@ public class OutputProcessorTest {
 	static long offset;
 	public static void generateSampleJson(OutputQueue outputQueue) {
 	    offset = 0;
-		ResourceHelper.processResource("com/skp/logmetric/access.log", new LineReadCallback() {
+		ResourceHelper.processResource("access.log", new LineReadCallback() {
 			@Override
 			public void processLine(String line) {
 				try {

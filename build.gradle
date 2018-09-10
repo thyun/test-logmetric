@@ -15,8 +15,8 @@ apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 
 jar {
-	baseName = 'demo'
-	version = '0.0.1-SNAPSHOT'
+	baseName = 'logmetric'
+	version = '0.1.0'
 }
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -31,18 +31,20 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter')
 	compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.boot:spring-boot-starter-actuator")
-    compile 'org.projectlombok:lombok:1.14.4'
+//    compile 'org.projectlombok:lombok:1.16.20'
+//    compile 'org.projectlombok:lombok:1.14.4'
     compile("org.jolokia:jolokia-core")
+    compile("org.json:json")
     
     // https://mvnrepository.com/artifact/org.apache.kafka/kafka
     compile group: 'org.apache.kafka', name: 'kafka_2.10', version: '0.8.2.2'
     compile group: 'org.apache.kafka', name: 'kafka-clients', version: '0.8.2.2'
-//    compile group: 'org.apache.kafka', name: 'kafka_2.11', version: '0.10.2.1'
 	compile group: 'org.apache.kafka', name: 'kafka-clients', version: '0.10.2.1'
     
 //    compile("org.apache.logging.log4j:log4j-api:2.7")
 //    compile("org.apache.logging.log4j:log4j-core:2.7")
     
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+	compileOnly 'org.projectlombok:lombok:1.16.20'
 }
 

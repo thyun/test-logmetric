@@ -120,7 +120,7 @@ public class GeneralConsumerTest {
 	static long offset;
 	public static void generateSamplePlain(MockConsumer<String, String> mockConsumer, String topic) {
 		offset = 0;
-		ResourceHelper.processResource("com/skp/logmetric/access.log", new LineReadCallback() {
+		ResourceHelper.processResource("access.log", new LineReadCallback() {
 			@Override
 			public void processLine(String line) {
 				mockConsumer.addRecord(new ConsumerRecord<String, String>(topic, 0, 
@@ -131,7 +131,7 @@ public class GeneralConsumerTest {
 	
 	public static void generateSampleJson(MockConsumer<String, String> mockConsumer, String topic) {
 	    offset = 0;
-		ResourceHelper.processResource("com/skp/logmetric/access.log", new LineReadCallback() {
+		ResourceHelper.processResource("access.log", new LineReadCallback() {
 			@Override
 			public void processLine(String line) {
 				mockConsumer.addRecord(new ConsumerRecord<String, String>(topic, 0, 

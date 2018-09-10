@@ -8,8 +8,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import com.skp.logmetric.event.LogEvent;
 
 import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class OutputQueue extends LinkedBlockingQueue<List<LogEvent>> {
 	final static int QUEUE_SIZE = 1000;
 	

@@ -7,10 +7,10 @@ import org.json.JSONObject;
 import com.skp.util.CommonHelper;
 
 import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class LogEvent extends JSONObject {
-//	String key;
 	Date timestamp;
 	
 	public static LogEvent parse(String value) {
@@ -20,7 +20,6 @@ public class LogEvent extends JSONObject {
 
 	public LogEvent() {
 		super();
-//		this.key = key;
 		
 		this.timestamp = new Date();
 		this.put("@timestamp", CommonHelper.timestamp2Str(timestamp));
@@ -28,7 +27,6 @@ public class LogEvent extends JSONObject {
 	
 	public LogEvent(String value) {
 		super(value);
-//		this.key = key;
 		
 		setTimestamp(new Date());
 	}
@@ -44,9 +42,10 @@ public class LogEvent extends JSONObject {
 	}
 	
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		return super.toString();
+/*		StringBuffer sb = new StringBuffer();
 		sb.append("LogEvent " + super.toString());
-		return sb.toString();
+		return sb.toString(); */
 	}
 
 }

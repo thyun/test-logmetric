@@ -1,13 +1,16 @@
-package com.skp.logmetric.output;
+package com.skp.logmetric.output.kafka;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.skp.logmetric.event.LogEvent;
+import com.skp.logmetric.output.OutputPlugin;
+import com.skp.logmetric.output.OutputQueue;
 
 import lombok.Data;
 
@@ -17,6 +20,7 @@ public class OutputKafka implements OutputPlugin {
 	ConfigOutputKafka config;
 	ExecutorService executor;
 	OutputQueue outputQueue = new OutputQueue();
+	GeneralProducer producer;
 
 	public OutputKafka(ConfigOutputKafka config) {
 		this.config = config;
@@ -31,15 +35,18 @@ public class OutputKafka implements OutputPlugin {
 	private void process() {
 		try {
 			List<LogEvent> elist = outputQueue.take();
-			for (LogEvent e: elist)
-				process(config, e);
+			process(config, elist);
 		} catch (InterruptedException ex) {
 			ex.printStackTrace();
 		} 
 	}
 
-	private void process(ConfigOutputKafka config, LogEvent e) {
-		logger.debug("output kafka: " + e);
+	private void process(ConfigOutputKafka config, List<LogEvent> elist) {
+		for (LogEvent e: elist) {
+			logger.debug("output kafka: " + e);
+			ProducerRecord<String, String> record = new ProducerRecord<>(config.getTopic(), "", e.toString());
+			producer.produce(record);
+		}
 
 	}
 
@@ -47,6 +54,8 @@ public class OutputKafka implements OutputPlugin {
 	public void init() {
 		int numConsumers = 1;
         executor = Executors.newFixedThreadPool(numConsumers);
+        
+        producer = new GeneralProducer(config.getBroker());
 
 	}
 
