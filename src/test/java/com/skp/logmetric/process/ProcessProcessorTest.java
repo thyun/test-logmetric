@@ -12,6 +12,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.MockConsumer;
 import org.apache.kafka.clients.consumer.OffsetResetStrategy;
 import org.apache.kafka.common.TopicPartition;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.junit.Before;
@@ -70,7 +71,7 @@ public class ProcessProcessorTest {
 	 * }
 	 */
 	@Test
-	public void testProcessProcessor() throws IOException, ParseException {
+	public void testSampleJson() throws IOException, ParseException {
 		// Get config
 		String input = ResourceHelper.getResourceString("process.conf");
 		Config config = Config.create(input);
@@ -99,8 +100,8 @@ public class ProcessProcessorTest {
 			@Override
 			public void processLine(String line) {
 				try {
-					List<LogEvent> elist1 = createLogEventList(produceJson("web01", line));
-					List<LogEvent> elist2 = createLogEventList(produceJson("web02", line));
+					List<LogEvent> elist1 = createLogEventList(produceSampleJson("web01", line));
+					List<LogEvent> elist2 = createLogEventList(produceSampleJson("web02", line));
 					ProcessQueueBulk.getInstance().put(elist1);
 					ProcessQueueBulk.getInstance().put(elist2);
 //					ProcessQueue.getInstance().put(createLogEvent(produceJson("web01", line)));
@@ -118,13 +119,75 @@ public class ProcessProcessorTest {
 		return elist;
 	}
 
-	private static String produceJson(String host, String line) {
+	private static String produceSampleJson(String host, String line) {
 		JSONObject j = new JSONObject();
 		j.put("host", host);
 		j.put("nxtime", 1536298656382L);
 		j.put("logInstance", "Anvil");
 		j.put("sourceType", "pmon-accesslog");
 		j.put("log",  line);
+		return j.toString();
+	}
+	
+	/*
+	 * Filebeat sample:
+	 * {"@timestamp":"2018-09-11T08:53:23.104Z","@version":"1","offset":1488771,"input":{"type":"log"},"tags":["beats_input_codec_plain_applied"],"beat":{"version":"6.4.0","name":"SMONi-web-dev01","hostname":"SMONi-web-dev01"},"prospector":{"type":"log"},"source":"/app/nginx/logs/access.log","message":"172.21.43.140 - - [11/Sep/2018:17:53:15 +0900] \"GET /v1/instances/list HTTP/1.1\" 200 575 \"-\" \"Apache-HttpClient/4.5.2 (Java/1.8.0_51)\" \"0.007\"","host":{"name":"SMONi-web-dev01"}}
+	 */
+	@Test
+	public void testFilebeatJson() throws IOException, ParseException {
+		// Get config
+		String input = ResourceHelper.getResourceString("process-filebeat.conf");
+		Config config = Config.create(input);
+		
+		// Create ProcessProcessor
+	    ProcessProcessor pprocess = new ProcessProcessor(config);
+	    pprocess.init();
+		
+		// Generate sample log
+		generateFilebeatJson();
+		
+		// Process
+		for (int i=0; i<200; i++)
+			pprocess.process();
+		
+		// Export
+		ProcessMetricsService service = new ProcessMetricsService();
+	    service.export(0);
+	    service.export(0);
+	}
+
+	private void generateFilebeatJson() {
+	    offset = 0;
+		ResourceHelper.processResource("access.log", new LineReadCallback() {
+			@Override
+			public void processLine(String line) {
+				try {
+					List<LogEvent> elist1 = createLogEventList(produceFilebeatJson("web01", line));
+					List<LogEvent> elist2 = createLogEventList(produceFilebeatJson("web02", line));
+					ProcessQueueBulk.getInstance().put(elist1);
+					ProcessQueueBulk.getInstance().put(elist2);
+				} catch (InterruptedException e) {
+					logger.error(e.toString());
+				}
+			}
+		});
+	}
+
+	protected String produceFilebeatJson(String host, String line) {
+		JSONObject j = new JSONObject();
+		JSONArray jtags = new JSONArray();
+		jtags.put("beats_input_codec_plain_applied");
+		JSONObject jbeat = new JSONObject();
+		jbeat.put("version", "6.4.0");
+		jbeat.put("name", host);
+		jbeat.put("hostname", host);
+		JSONObject jhost = new JSONObject();
+		jhost.put("name", host);
+		
+		j.put("tags", jtags);
+		j.put("beat", jbeat);
+		j.put("message",  line);
+		j.put("host", jhost);
 		return j.toString();
 	}
 

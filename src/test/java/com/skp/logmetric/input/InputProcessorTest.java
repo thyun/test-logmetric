@@ -63,7 +63,7 @@ public class InputProcessorTest {
 	    return mockConsumer;
 	}
 	
-	@Test
+//	@Test
 	public void testInputKafka08() throws IOException, ParseException, InterruptedException {
 		// Get config
 		String input = ResourceHelper.getResourceString("process08.conf");
@@ -75,15 +75,7 @@ public class InputProcessorTest {
 	    
 	    // Get InputKafka & GeneralConsumer
 	    InputKafka08 inputKafka = (InputKafka08) iprocess.getInputPluginList().get(0);	// Assume 1 input plugin
-//	    GeneralConsumer gconsumer = inputKafka.getConsumerList().get(0);		// Assume 1 GeneralConsumer
 	    String topic = inputKafka.getConfig().getTopic();
-	    
-	    // Apply MockConsumer 
-//	    MockConsumer<String, String> mockConsumer = createMockConsumer();
-//	    gconsumer.applyMockConsumer(mockConsumer, topic);
-	    
-	    // Generate sample data
-//	    GeneralConsumerTest.generateSampleJson(mockConsumer, topic);
 	    
 	    // Consume
 	    iprocess.start();
@@ -93,8 +85,6 @@ public class InputProcessorTest {
 	    List<LogEvent> elist = ProcessQueueBulk.getInstance().take();
 	    for (LogEvent e: elist)
 	    	logger.debug("ProcessQueue first input: " + e);
-//	    gconsumer.consume();
-//	    assertEquals(200, ProcessQueue.getInstance().size());
 	}
 
 }

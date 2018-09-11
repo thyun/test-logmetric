@@ -1,6 +1,7 @@
 package com.skp.logmetric;
 
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
@@ -11,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 
 import com.skp.logmetric.config.Config;
+import com.skp.logmetric.config.ConfigPath;
 import com.skp.logmetric.input.InputProcessor;
 import com.skp.logmetric.output.OutputProcessor;
 import com.skp.logmetric.process.ProcessMetricsService;
@@ -33,18 +35,40 @@ public class MainApplication {
 	}
 
 	private void start(String[] args) {
+		if (args.length > 1)
+			ConfigPath.setProcessConf(args[0]);
+		if (args.length > 2)
+			ConfigPath.setRegexConf(args[1]);
+		logger.debug("processConf=" + ConfigPath.getProcessConf());
+		logger.debug("regexConf=" + ConfigPath.getRegexConf());
+		
 		// Get spring context
 		ctx = SpringApplication.run(MainApplication.class, args);
 		printSpringBeans();
 		
 		// Get config
-		String input = ResourceHelper.getResourceString("process08.conf");
+		String input = ResourceHelper.getResourceString(ConfigPath.getProcessConf());
 		config = Config.create(input);
 		
 		// Start
 		startOutput();
 		startProcess();
 		startInput();
+		
+		// Support Ctrl+C
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+            	iprocessor.stop();
+            	pprocessor.stop();
+            	oprocessor.stop();
+            }
+          });
+	}
+
+	private void printHelp() {
+		System.out.println("Usage:");
+		System.out.println("java -jar logmetric.jar {process.conf} {regex.conf}");
 	}
 
 	private void startInput() {

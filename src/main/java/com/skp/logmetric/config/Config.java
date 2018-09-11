@@ -12,7 +12,6 @@ public class Config {
 	ConfigInput configInput;
 	ConfigProcess configProcess;
 	ConfigOutput configOutput;
-	String foo;
 	
 	public static Config create(String value) {
 		Config config = new Config();

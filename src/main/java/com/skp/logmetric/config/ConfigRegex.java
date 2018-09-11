@@ -19,7 +19,7 @@ public class ConfigRegex extends HashMap<String, String> {
 	
 	public static ConfigRegex getInstance() {
 		if (instance == null) {
-			instance = create(ResourceHelper.getResourceLineList("regex.conf"));
+			instance = create(ResourceHelper.getResourceLineList(ConfigPath.regexConf));
 		}
 		return instance;
 	}

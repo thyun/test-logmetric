@@ -46,7 +46,7 @@ public class OutputKafka08 implements OutputPlugin {
 	private void process(ConfigOutputKafka08 config, List<LogEvent> elist) {
 		ArrayList<KeyedMessage<String, String>> mlist = new ArrayList<KeyedMessage<String, String>>();
 		for (LogEvent e: elist) {
-			logger.debug("output kafka08: " + e);
+			logger.debug("Output kafka08: " + e);
 			KeyedMessage<String, String> m = new KeyedMessage<>(config.getTopic(), "", e.toString());
 			mlist.add(m);
 		}

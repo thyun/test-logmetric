@@ -43,7 +43,7 @@ public class OutputKafka implements OutputPlugin {
 
 	private void process(ConfigOutputKafka config, List<LogEvent> elist) {
 		for (LogEvent e: elist) {
-			logger.debug("output kafka: " + e);
+			logger.debug("Output kafka: " + e);
 			ProducerRecord<String, String> record = new ProducerRecord<>(config.getTopic(), "", e.toString());
 			producer.produce(record);
 		}
