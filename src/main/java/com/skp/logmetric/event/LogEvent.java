@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.json.JSONObject;
 
+import com.skp.logmetric.config.ConfigValue;
 import com.skp.util.CommonHelper;
 
 import lombok.Data;
@@ -39,6 +40,10 @@ public class LogEvent extends JSONObject {
 	public void setTimestamp(Date timestamp, String tfield) {
 		this.timestamp = timestamp;
 		this.put(tfield, CommonHelper.timestamp2Str(timestamp));
+	}
+	
+	public ConfigValue getConfigValue(String raw) {
+		return ConfigValue.create(this, raw);
 	}
 	
 	public String toString() {

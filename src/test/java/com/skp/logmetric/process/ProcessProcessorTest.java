@@ -130,7 +130,7 @@ public class ProcessProcessorTest {
 	}
 	
 	/*
-	 * Filebeat sample:
+	 * Filebeat sample (Filebeat -> Logstash):
 	 * {"@timestamp":"2018-09-11T08:53:23.104Z","@version":"1","offset":1488771,"input":{"type":"log"},"tags":["beats_input_codec_plain_applied"],"beat":{"version":"6.4.0","name":"SMONi-web-dev01","hostname":"SMONi-web-dev01"},"prospector":{"type":"log"},"source":"/app/nginx/logs/access.log","message":"172.21.43.140 - - [11/Sep/2018:17:53:15 +0900] \"GET /v1/instances/list HTTP/1.1\" 200 575 \"-\" \"Apache-HttpClient/4.5.2 (Java/1.8.0_51)\" \"0.007\"","host":{"name":"SMONi-web-dev01"}}
 	 */
 	@Test
