@@ -36,7 +36,7 @@ public class ConfigValue {
 			cv = createWithVariable(e, raw);
 			
 		} else
-			cv = new ConfigValue(raw, raw, getTargetValue(e, raw));
+			cv = new ConfigValue(raw, raw, makeTargetValue(e, raw));
 		
 		return cv;
 	}
@@ -50,7 +50,7 @@ public class ConfigValue {
 			fields = getFields(inner);
 		} else
 			fields = Arrays.asList(inner);
-		return new ConfigValue(raw, getTargetField(fields), getTargetValue(e, fields));
+		return new ConfigValue(raw, makeTargetField(fields), makeTargetValue(e, fields));
 	}
 
 	// (\\S+?) - Match field (? means non-greedy)
@@ -71,7 +71,7 @@ public class ConfigValue {
 		return fields;
 	}
 
-	private static String getTargetField(List<String> fields) {
+	private static String makeTargetField(List<String> fields) {
 		StringBuffer sb = new StringBuffer();
 		
 		for (int i=0; i<fields.size(); i++) {
@@ -83,7 +83,7 @@ public class ConfigValue {
 		return sb.toString();
 	}
 
-	private static Object getTargetValue(LogEvent e, List<String> fields) {
+	private static Object makeTargetValue(LogEvent e, List<String> fields) {
 		JSONObject j = (JSONObject) e;
 		Object o = new String("N/A");
 		for (int i=0; i<fields.size(); i++) {
@@ -99,10 +99,10 @@ public class ConfigValue {
 		return o;
 	}
 
-	private static Object getTargetValue(LogEvent e, String field) {
+	private static Object makeTargetValue(LogEvent e, String field) {
 		if (e.has(field))
 			return e.get(field);
-		return ConfigVariable.getValue(field);
+		return ConfigRegex.getInstance().getValue(field);
 	}
 
 	static String VALUE_VARIABLE_REGEX = "%\\{(\\S+?)}";
@@ -114,6 +114,10 @@ public class ConfigValue {
 			return key;
 		}
 		return variable;
+	}
+	
+	public String getTargetValueString() {
+		return "" + targetValue;
 	}
 
 }

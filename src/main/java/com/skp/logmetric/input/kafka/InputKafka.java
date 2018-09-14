@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.skp.logmetric.event.LogEvent;
 import com.skp.logmetric.input.InputPlugin;
 import com.skp.logmetric.input.kafka.GeneralConsumer.ConsumerCallback;
-import com.skp.logmetric.process.ProcessQueueBulk;
+import com.skp.logmetric.process.ProcessQueue;
 
 import lombok.Data;
 
@@ -60,7 +60,7 @@ public class InputKafka implements InputPlugin {
 	private void process(int id, ConsumerRecords<String, String> records) {
 		try {
 			List<LogEvent> elist = createLogEventList(records);
-			ProcessQueueBulk.getInstance().put(elist);
+			ProcessQueue.getInstance().put(elist);
 			for (LogEvent e: elist) 
 				logger.debug("Input kafka " + e);
 		} catch (InterruptedException e) {

@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.skp.logmetric.event.LogEvent;
-import com.skp.logmetric.process.ProcessQueueBulk;
+import com.skp.logmetric.process.ProcessQueue;
 
 import lombok.Data;
 
@@ -48,7 +48,7 @@ public class OutputFile implements OutputPlugin {
 	}
 
 	private void process(ConfigOutputFile config, LogEvent e) {
-		logger.debug("output file: " + e);
+		logger.debug("Output file: " + e);
 		try {
 			writer.write(e.toString());
 			writer.write("\n");
@@ -79,8 +79,7 @@ public class OutputFile implements OutputPlugin {
 
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
-		
+		executor.shutdown();
 	}
 
 }

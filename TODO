@@ -1,10 +1,9 @@
 TODO
-- Filebeat 연동 테스트
-- ConfigVariable 삭제
 - MetricStats: range 지원
 - Metrics: Multiple key 지원(host & instance ...)
 - Stream 처리
 - LogType 지원
 - add_field 지원
+- String value에 대한 metric?
 
 DONE

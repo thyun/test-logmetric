@@ -76,7 +76,7 @@ public class ProcessProcessor {
 	public void process() {
 		ArrayList<LogEvent> outList = new ArrayList<>();
 		try {
-			List<LogEvent> elist = ProcessQueueBulk.getInstance().take();
+			List<LogEvent> elist = ProcessQueue.getInstance().take();
 			for (LogEvent e: elist) {
 				LogEvent out = process(config, e);
 				if (out != null)

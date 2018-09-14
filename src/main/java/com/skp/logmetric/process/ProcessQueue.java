@@ -11,17 +11,17 @@ import lombok.Data;
 import lombok.Getter;
 
 @Getter
-public class ProcessQueueBulk extends LinkedBlockingQueue<List<LogEvent>> {
+public class ProcessQueue extends LinkedBlockingQueue<List<LogEvent>> {
 	final static int QUEUE_SIZE = 1000;
-	static ProcessQueueBulk processQueue = null;
+	static ProcessQueue processQueue = null;
 	
-	public ProcessQueueBulk(int queueSize) {
+	public ProcessQueue(int queueSize) {
 		super(queueSize);
 	}
 
-	public static ProcessQueueBulk getInstance() {
+	public static ProcessQueue getInstance() {
 		if (processQueue == null) {
-			processQueue = new ProcessQueueBulk(QUEUE_SIZE);
+			processQueue = new ProcessQueue(QUEUE_SIZE);
 		}
 		return processQueue;
 	}

@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.skp.logmetric.config.ConfigItem;
-import com.skp.logmetric.config.ConfigVariable;
+import com.skp.logmetric.config.ConfigRegex;
 
 import lombok.Data;
 
@@ -31,7 +31,7 @@ public class ConfigProcessMatch implements ConfigItem {
 		type = (String) j.get("type");
 		field = (String) j.get("field");
 		String s = (String) j.get("pattern");
-		pattern = ConfigVariable.getValueWithRaw(s);
+		pattern = ConfigRegex.getInstance().getValueWithRaw(s);
 	}
 
 	public void prepare() {

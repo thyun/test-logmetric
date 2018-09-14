@@ -102,8 +102,8 @@ public class ProcessProcessorTest {
 				try {
 					List<LogEvent> elist1 = createLogEventList(produceSampleJson("web01", line));
 					List<LogEvent> elist2 = createLogEventList(produceSampleJson("web02", line));
-					ProcessQueueBulk.getInstance().put(elist1);
-					ProcessQueueBulk.getInstance().put(elist2);
+					ProcessQueue.getInstance().put(elist1);
+					ProcessQueue.getInstance().put(elist2);
 //					ProcessQueue.getInstance().put(createLogEvent(produceJson("web01", line)));
 //					ProcessQueue.getInstance().put(createLogEvent(produceJson("web02", line)));
 				} catch (InterruptedException e) {
@@ -164,8 +164,8 @@ public class ProcessProcessorTest {
 				try {
 					List<LogEvent> elist1 = createLogEventList(produceFilebeatJson("web01", line));
 					List<LogEvent> elist2 = createLogEventList(produceFilebeatJson("web02", line));
-					ProcessQueueBulk.getInstance().put(elist1);
-					ProcessQueueBulk.getInstance().put(elist2);
+					ProcessQueue.getInstance().put(elist1);
+					ProcessQueue.getInstance().put(elist2);
 				} catch (InterruptedException e) {
 					logger.error(e.toString());
 				}

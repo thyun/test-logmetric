@@ -19,7 +19,7 @@ import com.skp.logmetric.event.LogEvent;
 import com.skp.logmetric.input.kafka.GeneralConsumer;
 import com.skp.logmetric.input.kafka.InputKafka;
 import com.skp.logmetric.input.kafka.InputKafka08;
-import com.skp.logmetric.process.ProcessQueueBulk;
+import com.skp.logmetric.process.ProcessQueue;
 import com.skp.util.ResourceHelper;
 
 public class InputProcessorTest {
@@ -27,7 +27,7 @@ public class InputProcessorTest {
 	
 	@Before
 	public void setUp() {
-		ProcessQueueBulk.getInstance().clear();
+		ProcessQueue.getInstance().clear();
 	}
 	
 	@Test
@@ -54,7 +54,7 @@ public class InputProcessorTest {
 	    
 	    // Consume
 	    gconsumer.consume();
-	    List<LogEvent> elist = ProcessQueueBulk.getInstance().take();
+	    List<LogEvent> elist = ProcessQueue.getInstance().take();
 	    assertEquals(200, elist.size());
 	}
 
@@ -81,8 +81,8 @@ public class InputProcessorTest {
 	    iprocess.start();
 	    Thread.sleep(5000);
 	    iprocess.stop();
-	    logger.debug("ProcessQueue size=" + ProcessQueueBulk.getInstance().size());
-	    List<LogEvent> elist = ProcessQueueBulk.getInstance().take();
+	    logger.debug("ProcessQueue size=" + ProcessQueue.getInstance().size());
+	    List<LogEvent> elist = ProcessQueue.getInstance().take();
 	    for (LogEvent e: elist)
 	    	logger.debug("ProcessQueue first input: " + e);
 	}
