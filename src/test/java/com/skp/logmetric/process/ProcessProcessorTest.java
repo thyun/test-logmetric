@@ -73,7 +73,7 @@ public class ProcessProcessorTest {
 	@Test
 	public void testSampleJson() throws IOException, ParseException {
 		// Get config
-		String input = ResourceHelper.getResourceString("process.conf");
+		String input = ResourceHelper.getResourceString("process-nxlog.conf");
 		Config config = Config.create(input);
 		
 		// Create ProcessProcessor

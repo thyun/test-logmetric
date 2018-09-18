@@ -6,7 +6,6 @@ import java.util.List;
 import org.json.JSONObject;
 
 import com.skp.logmetric.input.kafka.ConfigInputKafka;
-import com.skp.logmetric.input.kafka.ConfigInputKafka08;
 
 import lombok.Data;
 
@@ -31,8 +30,6 @@ public class ConfigInput {
 		String type = (String) j.get("type");
 		if ("kafka".equals(type)) {
 			return new ConfigInputKafka(j);
-		} else if ("kafka08".equals(type)) {
-			return new ConfigInputKafka08(j);
 		}
 		return null;
 	}

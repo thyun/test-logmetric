@@ -44,7 +44,7 @@ public class ConfigValue {
 	static String VALUE_VARIABLE_INNER = "[";
 	private static ConfigValue createWithVariable(LogEvent e, String raw) {
 		String inner = getInner(raw);
-		logger.debug("innter=" + inner);
+		logger.debug("inner=" + inner);
 		List<String> fields;
 		if (inner.startsWith(VALUE_VARIABLE_INNER)) {
 			fields = getFields(inner);

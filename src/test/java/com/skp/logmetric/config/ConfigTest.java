@@ -30,7 +30,7 @@ public class ConfigTest {
 		ConfigRegex configRegex = ConfigRegex.create(ResourceHelper.getResourceLineList("regex.conf"));
 		logger.debug("confRegex=" + configRegex);
 		
-		Config config = Config.create(ResourceHelper.getResourceString("process.conf"));
+		Config config = Config.create(ResourceHelper.getResourceString("process-nxlog.conf"));
 		List<ConfigItem> configInputList = config.getConfigInput().getConfigInputList();
 		logger.debug("configInputList=" + configInputList);
 		

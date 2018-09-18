@@ -2,23 +2,15 @@ package com.skp.logmetric.output;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import org.apache.kafka.common.errors.WakeupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.skp.logmetric.config.Config;
-import com.skp.logmetric.config.ConfigInput;
 import com.skp.logmetric.config.ConfigItem;
 import com.skp.logmetric.config.ConfigOutput;
 import com.skp.logmetric.event.LogEvent;
-import com.skp.logmetric.event.MetricEvent;
 import com.skp.logmetric.output.kafka.ConfigOutputKafka;
-import com.skp.logmetric.output.kafka.ConfigOutputKafka08;
 import com.skp.logmetric.output.kafka.OutputKafka;
-import com.skp.logmetric.output.kafka.OutputKafka08;
 
 import lombok.Data;
 
@@ -70,8 +62,6 @@ public class OutputProcessor {
 				outputPluginList.add(new OutputFile((ConfigOutputFile) cp));
 			} else if (cp instanceof ConfigOutputKafka) {
 				outputPluginList.add(new OutputKafka((ConfigOutputKafka) cp));
-			} else if (cp instanceof ConfigOutputKafka08) {
-				outputPluginList.add(new OutputKafka08((ConfigOutputKafka08) cp));
 			}
 		}
 	}

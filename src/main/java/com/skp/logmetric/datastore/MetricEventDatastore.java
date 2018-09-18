@@ -33,6 +33,10 @@ public class MetricEventDatastore {
 			me.put(tkey, tvalue);
 			me.setTimestamp(ttimestamp);
 			
+me.put("type", "access-metric-filebeat");  // TODO Delete
+if (me.has("host.name"))
+	me.put("host", me.getString("host.name"));
+			
 			hashMap.put(lvalue, me);
 		}
 		

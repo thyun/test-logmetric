@@ -35,9 +35,9 @@ public class MainApplication {
 	}
 
 	private void start(String[] args) {
-		if (args.length > 1)
+		if (args.length > 0)
 			ConfigPath.setProcessConf(args[0]);
-		if (args.length > 2)
+		if (args.length > 1)
 			ConfigPath.setRegexConf(args[1]);
 		logger.debug("processConf=" + ConfigPath.getProcessConf());
 		logger.debug("regexConf=" + ConfigPath.getRegexConf());

@@ -82,7 +82,7 @@ public class ProcessProcessor {
 				if (out != null)
 					outList.add(out);
 			}
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
@@ -112,8 +112,8 @@ public class ProcessProcessor {
 //			if (r != true)
 //				return;
 		}
+		logger.debug("ProcessProcessor.process() end");
 		return out;
-		
 	}
 
 }

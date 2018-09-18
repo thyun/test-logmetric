@@ -12,9 +12,7 @@ import com.skp.logmetric.config.Config;
 import com.skp.logmetric.config.ConfigInput;
 import com.skp.logmetric.config.ConfigItem;
 import com.skp.logmetric.input.kafka.ConfigInputKafka;
-import com.skp.logmetric.input.kafka.ConfigInputKafka08;
 import com.skp.logmetric.input.kafka.InputKafka;
-import com.skp.logmetric.input.kafka.InputKafka08;
 
 import lombok.Data;
 
@@ -59,8 +57,6 @@ public class InputProcessor {
 		for (ConfigItem cp: configInput.getConfigInputList()) {
 			if (cp instanceof ConfigInputKafka) {
 				inputPluginList.add(new InputKafka((ConfigInputKafka) cp));
-			} else if (cp instanceof ConfigInputKafka08) {
-				inputPluginList.add(new InputKafka08((ConfigInputKafka08) cp));
 			}
 		}
 	}

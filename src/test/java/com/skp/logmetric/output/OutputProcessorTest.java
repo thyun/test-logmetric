@@ -26,7 +26,7 @@ public class OutputProcessorTest {
 	@Test
 	public void testOutputFile() throws IOException, ParseException, InterruptedException {
 		// Get config
-		String input = ResourceHelper.getResourceString("process.conf");
+		String input = ResourceHelper.getResourceString("process-nxlog.conf");
 		Config config = Config.create(input);
 		
 	    // Create OutputProcessor

@@ -1,4 +1,10 @@
 TODO
+- Config - create(FromPath), createFromResource 추가
+- 3분 데이터 처리시 에러 없는지 확인
+- process match: 없는 field 사용시 처리 stop됨
+- conf file not found 처리
+- Exception 발생시 output
+- add_field 지원
 - MetricStats: range 지원
 - Metrics: Multiple key 지원(host & instance ...)
 - Stream 처리
@@ -7,3 +13,9 @@ TODO
 - String value에 대한 metric?
 
 DONE
+- Output file sample
+	"output": {
+		"type": "file",
+		"path": "output-process.log",
+		"max": 1000000
+	}

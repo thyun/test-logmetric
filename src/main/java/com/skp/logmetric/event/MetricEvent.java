@@ -56,9 +56,10 @@ public class MetricEvent extends LogEvent {
 		return ms;
 	}
 	
+	static String SAMPLING_COUNT = "count";
 	public String export() {
 		JSONObject j = new JSONObject();
-		j.put("sampling", this.getSampling());
+		j.put(SAMPLING_COUNT, this.getSampling());
 		
 		Iterator<String> it = this.keys();
 		while (it.hasNext()) {
@@ -76,7 +77,7 @@ public class MetricEvent extends LogEvent {
 	}
 	
 	public LogEvent toLogEvent() {
-		return new LogEvent(toString());
+		return new LogEvent(toString(), getTimestamp());
 	}
 	
 	public String toString() {

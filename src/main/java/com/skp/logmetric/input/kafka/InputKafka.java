@@ -60,9 +60,9 @@ public class InputKafka implements InputPlugin {
 	private void process(int id, ConsumerRecords<String, String> records) {
 		try {
 			List<LogEvent> elist = createLogEventList(records);
-			ProcessQueue.getInstance().put(elist);
 			for (LogEvent e: elist) 
 				logger.debug("Input kafka " + e);
+			ProcessQueue.getInstance().put(elist);
 		} catch (InterruptedException e) {
 			logger.error(e.toString());
 		}

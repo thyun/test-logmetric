@@ -4,6 +4,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.skp.logmetric.config.ConfigValue;
 import com.skp.logmetric.datastore.MetricEventDatastore;
 import com.skp.logmetric.event.LogEvent;
@@ -11,6 +14,7 @@ import com.skp.logmetric.event.MetricEvent;
 import com.skp.util.CommonHelper;
 
 public class ProcessMetrics {
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	public boolean process(ConfigProcessMetrics config, LogEvent e) {
 		ConfigValue cv = e.getConfigValue(config.getKey());
@@ -20,6 +24,7 @@ public class ProcessMetrics {
 		String tvalue = e.getString(tkey);	// Target value (ex) 127.0.0.1 */
 		Date ttimestamp = getMetricTimestamp(e.getTimestamp());	// Target timestamp
 		
+		logger.debug("ProcessMetrics.process(): tkey=" + tkey + ", tvalue=" + tvalue + ", ttimestamp=" + CommonHelper.timestamp2Str(ttimestamp));
 		MetricEvent me = MetricEventDatastore.getInstance().getMetricEvent(tkey, tvalue, ttimestamp);
 		me.sampling();
 		for (String meter: config.getMeter()) {

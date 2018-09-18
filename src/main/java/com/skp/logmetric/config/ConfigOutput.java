@@ -6,10 +6,8 @@ import java.util.List;
 import org.json.JSONObject;
 
 import com.skp.logmetric.input.kafka.ConfigInputKafka;
-import com.skp.logmetric.input.kafka.ConfigInputKafka08;
 import com.skp.logmetric.output.ConfigOutputFile;
 import com.skp.logmetric.output.kafka.ConfigOutputKafka;
-import com.skp.logmetric.output.kafka.ConfigOutputKafka08;
 
 import lombok.Data;
 
@@ -40,8 +38,6 @@ public class ConfigOutput {
 			return new ConfigOutputFile(j);
 		} else if ("kafka".equals(type)) {
 			return new ConfigOutputKafka(j);
-		} else if ("kafka08".equals(type)) {
-			return new ConfigOutputKafka08(j);
 		}
 		return null;
 	}

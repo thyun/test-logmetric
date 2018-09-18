@@ -28,8 +28,12 @@ public class LogEvent extends JSONObject {
 	
 	public LogEvent(String value) {
 		super(value);
-		
 		setTimestamp(new Date());
+	}
+	
+	public LogEvent(String value, Date timestamp) {
+		super(value);
+		setTimestamp(timestamp);
 	}
 	
 	public void setTimestamp(Date timestamp) {
