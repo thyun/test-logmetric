@@ -17,7 +17,7 @@ import com.skp.logmetric.input.InputProcessor;
 import com.skp.logmetric.output.OutputProcessor;
 import com.skp.logmetric.process.ProcessMetricsService;
 import com.skp.logmetric.process.ProcessProcessor;
-import com.skp.util.ResourceHelper;
+import com.skp.util.FileHelper;
 
 @SpringBootApplication
 public class MainApplication {
@@ -47,7 +47,7 @@ public class MainApplication {
 		printSpringBeans();
 		
 		// Get config
-		String input = ResourceHelper.getResourceString(ConfigPath.getProcessConf());
+		String input = FileHelper.getFile(ConfigPath.getProcessConf());
 		config = Config.create(input);
 		
 		// Start

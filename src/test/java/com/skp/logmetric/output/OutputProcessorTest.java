@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import com.skp.logmetric.config.Config;
 import com.skp.logmetric.event.LogEvent;
-import com.skp.util.ResourceHelper;
-import com.skp.util.ResourceHelper.LineReadCallback;
+import com.skp.util.FileHelper;
+import com.skp.util.FileHelper.LineReadCallback;
 
 public class OutputProcessorTest {
 	private static final Logger logger = LoggerFactory.getLogger(OutputProcessorTest.class);
@@ -26,7 +26,7 @@ public class OutputProcessorTest {
 	@Test
 	public void testOutputFile() throws IOException, ParseException, InterruptedException {
 		// Get config
-		String input = ResourceHelper.getResourceString("process-nxlog.conf");
+		String input = FileHelper.getFile("process-nxlog.conf");
 		Config config = Config.create(input);
 		
 	    // Create OutputProcessor
@@ -46,7 +46,7 @@ public class OutputProcessorTest {
 	static long offset;
 	public static void generateSampleJson(OutputQueue outputQueue) {
 	    offset = 0;
-		ResourceHelper.processResource("access.log", new LineReadCallback() {
+		FileHelper.processFile("access.log", new LineReadCallback() {
 			@Override
 			public void processLine(String line) {
 				try {

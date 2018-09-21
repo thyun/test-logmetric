@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.skp.logmetric.event.LogEvent;
 import com.skp.logmetric.process.ConfigProcessMatch;
-import com.skp.util.ResourceHelper;
+import com.skp.util.FileHelper;
 
 public class ConfigTest {
 	private static final Logger logger = LoggerFactory.getLogger(ConfigTest.class);
@@ -27,10 +27,10 @@ public class ConfigTest {
 	// patternRegex=(\S+) (\S+) (\S+) \[(.+?)\] "(\S+) (\S+) (\S+)" (\d+) (\d+) "(.*?)" "(.*?)" "([\d\.]+)"(?:$|\s.*)
 	@Test
 	public void testConfig() throws IOException {
-		ConfigRegex configRegex = ConfigRegex.create(ResourceHelper.getResourceLineList("regex.conf"));
+		ConfigRegex configRegex = ConfigRegex.create(FileHelper.getFileLineList("regex.conf"));
 		logger.debug("confRegex=" + configRegex);
 		
-		Config config = Config.create(ResourceHelper.getResourceString("process-nxlog.conf"));
+		Config config = Config.create(FileHelper.getFile("process-nxlog.conf"));
 		List<ConfigItem> configInputList = config.getConfigInput().getConfigInputList();
 		logger.debug("configInputList=" + configInputList);
 		

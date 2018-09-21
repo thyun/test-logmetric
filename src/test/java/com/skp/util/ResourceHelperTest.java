@@ -4,20 +4,20 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.skp.util.ResourceHelper;
-import com.skp.util.ResourceHelper.LineReadCallback;
+import com.skp.util.FileHelper;
+import com.skp.util.FileHelper.LineReadCallback;
 
 public class ResourceHelperTest {
 	
 	@Test
 	public void testGetResource() throws IOException {
-		String log = ResourceHelper.getResourceString("access.log");
+		String log = FileHelper.getFile("access.log");
 		System.out.println("access.log=" + log);
 	}
 	
 	@Test
 	public void testProcessResource() throws IOException {
-		ResourceHelper.processResource("access.log", new LineReadCallback() {
+		FileHelper.processFile("access.log", new LineReadCallback() {
 			@Override
 			public void processLine(String line) {
 				System.out.println("line=" + line);

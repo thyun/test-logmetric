@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.skp.logmetric.event.KeyValue;
-import com.skp.util.ResourceHelper;
+import com.skp.util.FileHelper;
 
 import lombok.Data;
 import lombok.Getter;
@@ -21,7 +21,7 @@ public class ConfigRegex extends HashMap<String, String> {
 	
 	public static ConfigRegex getInstance() {
 		if (instance == null) {
-			instance = create(ResourceHelper.getResourceLineList(ConfigPath.regexConf));
+			instance = create(FileHelper.getFileLineList(ConfigPath.regexConf));
 		}
 		return instance;
 	}

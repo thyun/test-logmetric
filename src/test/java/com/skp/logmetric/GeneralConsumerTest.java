@@ -20,8 +20,8 @@ import com.skp.logmetric.config.Config;
 import com.skp.logmetric.input.kafka.GeneralConsumer;
 import com.skp.logmetric.process.ProcessProcessor;
 import com.skp.logmetric.process.ProcessMetricsService;
-import com.skp.util.ResourceHelper;
-import com.skp.util.ResourceHelper.LineReadCallback;
+import com.skp.util.FileHelper;
+import com.skp.util.FileHelper.LineReadCallback;
 
 public class GeneralConsumerTest {
 	private static final Logger logger = LoggerFactory.getLogger(GeneralConsumerTest.class);
@@ -120,7 +120,7 @@ public class GeneralConsumerTest {
 	static long offset;
 	public static void generateSamplePlain(MockConsumer<String, String> mockConsumer, String topic) {
 		offset = 0;
-		ResourceHelper.processResource("access.log", new LineReadCallback() {
+		FileHelper.processFile("access.log", new LineReadCallback() {
 			@Override
 			public void processLine(String line) {
 				mockConsumer.addRecord(new ConsumerRecord<String, String>(topic, 0, 
@@ -131,7 +131,7 @@ public class GeneralConsumerTest {
 	
 	public static void generateSampleJson(MockConsumer<String, String> mockConsumer, String topic) {
 	    offset = 0;
-		ResourceHelper.processResource("access.log", new LineReadCallback() {
+		FileHelper.processFile("access.log", new LineReadCallback() {
 			@Override
 			public void processLine(String line) {
 				mockConsumer.addRecord(new ConsumerRecord<String, String>(topic, 0, 

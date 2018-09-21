@@ -20,8 +20,8 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.skp.util.ResourceHelper;
-import com.skp.util.ResourceHelper.LineReadCallback;
+import com.skp.util.FileHelper;
+import com.skp.util.FileHelper.LineReadCallback;
 
 import lombok.Data;
 

@@ -28,8 +28,8 @@ import com.skp.logmetric.input.kafka.GeneralConsumer;
 import com.skp.logmetric.input.kafka.GeneralConsumer.ConsumerCallback;
 import com.skp.logmetric.process.ProcessProcessor;
 import com.skp.logmetric.process.ProcessMetricsService;
-import com.skp.util.ResourceHelper;
-import com.skp.util.ResourceHelper.LineReadCallback;
+import com.skp.util.FileHelper;
+import com.skp.util.FileHelper.LineReadCallback;
 
 public class ProcessProcessorTest {
 	private static final Logger logger = LoggerFactory.getLogger(ProcessProcessorTest.class);
@@ -73,7 +73,7 @@ public class ProcessProcessorTest {
 	@Test
 	public void testSampleJson() throws IOException, ParseException {
 		// Get config
-		String input = ResourceHelper.getResourceString("process-nxlog.conf");
+		String input = FileHelper.getFile("process-nxlog.conf");
 		Config config = Config.create(input);
 		
 		// Create ProcessProcessor
@@ -96,7 +96,7 @@ public class ProcessProcessorTest {
 	static long offset;
 	public static void generateSampleJson() {
 	    offset = 0;
-		ResourceHelper.processResource("access.log", new LineReadCallback() {
+		FileHelper.processFile("access.log", new LineReadCallback() {
 			@Override
 			public void processLine(String line) {
 				try {
@@ -136,7 +136,7 @@ public class ProcessProcessorTest {
 	@Test
 	public void testFilebeatJson() throws IOException, ParseException {
 		// Get config
-		String input = ResourceHelper.getResourceString("process-filebeat.conf");
+		String input = FileHelper.getFile("process-filebeat.conf");
 		Config config = Config.create(input);
 		
 		// Create ProcessProcessor
@@ -158,7 +158,7 @@ public class ProcessProcessorTest {
 
 	private void generateFilebeatJson() {
 	    offset = 0;
-		ResourceHelper.processResource("access.log", new LineReadCallback() {
+		FileHelper.processFile("access.log", new LineReadCallback() {
 			@Override
 			public void processLine(String line) {
 				try {

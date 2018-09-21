@@ -14,15 +14,23 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ResourceHelper {
-	private static final Logger logger = LoggerFactory.getLogger(ResourceHelper.class);
+public class FileHelper {
+	private static final Logger logger = LoggerFactory.getLogger(FileHelper.class);
 
-	public static String getResourceString(String relativePath) {
-		InputStream is = getResourceInputStream(relativePath);
+	public static String getFile(String relativePath) {
+		InputStream is = getInputStream(relativePath);
 		return readInputStream(is);
 	}
 	
-    public static InputStream getResourceInputStream(String relativePath) {                                  
+	public static String getFileFromPath(String relativePath) {
+		return null;
+	}
+	
+	public static String getFileFromResource(String relativePath) {
+		return null;
+	}
+	
+    public static InputStream getInputStream(String relativePath) {                                  
         String workDir = System.getProperty("user.dir");                                 
         String path = workDir + "/" + relativePath;                                              
         InputStream inputStream = null;
@@ -35,7 +43,7 @@ public class ResourceHelper {
 //          logger.debug("getConfigInputStream config from file: " + path);          
         }                                                                                
                                                                                          
-        inputStream = ResourceHelper.class.getClassLoader().getResourceAsStream(relativePath);       
+        inputStream = FileHelper.class.getClassLoader().getResourceAsStream(relativePath);       
 //        	logger.debug("getConfigInputStream config from resource: " + file);          
         return inputStream;                                                              
     }            
@@ -55,8 +63,8 @@ public class ResourceHelper {
     }
     
     // line-by-line callback
-    public static void processResource(String relativePath, LineReadCallback callback) {   
-    	InputStream is = getResourceInputStream(relativePath);
+    public static void processFile(String relativePath, LineReadCallback callback) {   
+    	InputStream is = getInputStream(relativePath);
         try {                                                              
             BufferedReader reader = new BufferedReader(new InputStreamReader(is)); 
             String line;    
@@ -72,8 +80,8 @@ public class ResourceHelper {
     	void processLine(String line);
     }
 
-	public static List<String> getResourceLineList(String relativePath) {
-    	InputStream is = getResourceInputStream(relativePath);
+	public static List<String> getFileLineList(String relativePath) {
+    	InputStream is = getInputStream(relativePath);
     	ArrayList<String> lineList = new ArrayList<>();
     	
     	try {                                                              

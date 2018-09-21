@@ -19,7 +19,7 @@ import com.skp.logmetric.event.LogEvent;
 import com.skp.logmetric.input.kafka.GeneralConsumer;
 import com.skp.logmetric.input.kafka.InputKafka;
 import com.skp.logmetric.process.ProcessQueue;
-import com.skp.util.ResourceHelper;
+import com.skp.util.FileHelper;
 
 public class InputProcessorTest {
 	private static final Logger logger = LoggerFactory.getLogger(InputProcessorTest.class);
@@ -32,7 +32,7 @@ public class InputProcessorTest {
 	@Test
 	public void testInputKafka() throws IOException, ParseException, InterruptedException {
 		// Get config
-		String input = ResourceHelper.getResourceString("process-nxlog.conf");
+		String input = FileHelper.getFile("process-nxlog.conf");
 		Config config = Config.create(input);
 		
 	    // Create InputProcessor
