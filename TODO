@@ -1,11 +1,9 @@
 TODO
-- add_field 지원
-- 3분 데이터 처리시 에러 없는지 확인
-- Stream 처리
-- LogType 지원
-- Metrics: range 지원
-- Metrics: Multiple key 지원(host & instance ...)
-- Metrics: String value 지원?
+- Stream support
+- LogType support
+- Metrics: range support
+- Metrics: Multiple key support(host & instance ...)
+- Metrics: String value support?
 
 DONE
 - Output file sample

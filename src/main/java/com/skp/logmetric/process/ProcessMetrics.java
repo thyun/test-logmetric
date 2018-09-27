@@ -3,10 +3,12 @@ package com.skp.logmetric.process;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.skp.logmetric.config.ConfigAddField;
 import com.skp.logmetric.config.ConfigValue;
 import com.skp.logmetric.datastore.MetricEventDatastore;
 import com.skp.logmetric.event.LogEvent;
@@ -37,7 +39,20 @@ public class ProcessMetrics {
 			else
 				me.stats(meter, (String) o);
 		}
-		return true;
+		
+		// TODO Call processCommon when export
+		processCommon(config, me);
+		return true; 
+	}
+
+	private void processCommon(ConfigProcessMetrics config, MetricEvent me) {
+		List<ConfigAddField> clist = config.getConfigAddFieldList();
+		for (ConfigAddField c: clist) {
+			String tfield = c.getField();
+			String raw = c.getValue();
+			ConfigValue cv = me.getConfigValue(raw);
+			me.put(tfield, cv.getTargetValueString());
+		}
 	}
 
 	private Date getMetricTimestamp(Date timestamp) {

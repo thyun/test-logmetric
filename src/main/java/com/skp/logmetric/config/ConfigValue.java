@@ -35,7 +35,7 @@ public class ConfigValue {
 			cv = createWithVariable(e, raw);
 			
 		} else
-			cv = new ConfigValue(raw, raw, makeTargetValue(e, raw));
+			cv = new ConfigValue(raw, raw, raw/*makeTargetValue(e, raw) */);
 		
 		return cv;
 	}
