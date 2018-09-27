@@ -1,16 +1,11 @@
 TODO
-- Config - create(FromPath), createFromResource 추가
-- 3분 데이터 처리시 에러 없는지 확인
-- process match: 없는 field 사용시 처리 stop됨
-- conf file not found 처리
-- Exception 발생시 output
 - add_field 지원
-- MetricStats: range 지원
-- Metrics: Multiple key 지원(host & instance ...)
+- 3분 데이터 처리시 에러 없는지 확인
 - Stream 처리
 - LogType 지원
-- add_field 지원
-- String value에 대한 metric?
+- Metrics: range 지원
+- Metrics: Multiple key 지원(host & instance ...)
+- Metrics: String value 지원?
 
 DONE
 - Output file sample

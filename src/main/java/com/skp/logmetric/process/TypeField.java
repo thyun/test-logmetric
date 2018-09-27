@@ -2,13 +2,13 @@ package com.skp.logmetric.process;
 
 import java.util.HashMap;
 
-import lombok.Data;
+import lombok.Getter;
 
 /*
  * TypeField expression
  * ex) %{WORD:client} %{WORD}
  */
-@Data
+@Getter
 public class TypeField {
 	// REGEX
 	// (\\S+?) - Match type (? means non-greedy)

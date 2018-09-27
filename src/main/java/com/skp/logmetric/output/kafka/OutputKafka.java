@@ -37,7 +37,7 @@ public class OutputKafka implements OutputPlugin {
 			List<LogEvent> elist = outputQueue.take();
 			process(config, elist);
 		} catch (InterruptedException ex) {
-			ex.printStackTrace();
+			logger.error("Error", ex);
 		} 
 	}
 

@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import com.skp.logmetric.event.LogEvent;
 
 import lombok.Data;
-import lombok.Getter;
 
 @Data
 public class ConfigValue {
@@ -102,7 +101,7 @@ public class ConfigValue {
 	private static Object makeTargetValue(LogEvent e, String field) {
 		if (e.has(field))
 			return e.get(field);
-		return ConfigRegex.getInstance().getValue(field);
+		return Config.getConfigRegex().getValue(field);
 	}
 
 	static String VALUE_VARIABLE_REGEX = "%\\{(\\S+?)}";

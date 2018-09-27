@@ -26,8 +26,8 @@ public class OutputProcessorTest {
 	@Test
 	public void testOutputFile() throws IOException, ParseException, InterruptedException {
 		// Get config
-		String input = FileHelper.getFile("process-nxlog.conf");
-		Config config = Config.create(input);
+//		String input = FileHelper.getFile("process-nxlog.conf");
+		Config config = Config.createFromResource("process-nxlog.conf", "regex.conf");
 		
 	    // Create OutputProcessor
 	    OutputProcessor oprocess = new OutputProcessor(config);
@@ -46,7 +46,7 @@ public class OutputProcessorTest {
 	static long offset;
 	public static void generateSampleJson(OutputQueue outputQueue) {
 	    offset = 0;
-		FileHelper.processFile("access.log", new LineReadCallback() {
+		FileHelper.processFileFromResource("access.log", new LineReadCallback() {
 			@Override
 			public void processLine(String line) {
 				try {

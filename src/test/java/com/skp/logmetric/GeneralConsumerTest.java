@@ -1,25 +1,17 @@
 package com.skp.logmetric;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.MockConsumer;
 import org.apache.kafka.clients.consumer.OffsetResetStrategy;
-import org.apache.kafka.common.TopicPartition;
 import org.json.JSONObject;
-import org.json.simple.parser.ParseException;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.skp.logmetric.config.Config;
 import com.skp.logmetric.input.kafka.GeneralConsumer;
-import com.skp.logmetric.process.ProcessProcessor;
-import com.skp.logmetric.process.ProcessMetricsService;
 import com.skp.util.FileHelper;
 import com.skp.util.FileHelper.LineReadCallback;
 
@@ -120,7 +112,7 @@ public class GeneralConsumerTest {
 	static long offset;
 	public static void generateSamplePlain(MockConsumer<String, String> mockConsumer, String topic) {
 		offset = 0;
-		FileHelper.processFile("access.log", new LineReadCallback() {
+		FileHelper.processFileFromResource("access.log", new LineReadCallback() {
 			@Override
 			public void processLine(String line) {
 				mockConsumer.addRecord(new ConsumerRecord<String, String>(topic, 0, 
@@ -131,7 +123,7 @@ public class GeneralConsumerTest {
 	
 	public static void generateSampleJson(MockConsumer<String, String> mockConsumer, String topic) {
 	    offset = 0;
-		FileHelper.processFile("access.log", new LineReadCallback() {
+		FileHelper.processFileFromResource("access.log", new LineReadCallback() {
 			@Override
 			public void processLine(String line) {
 				mockConsumer.addRecord(new ConsumerRecord<String, String>(topic, 0, 

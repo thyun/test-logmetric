@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.json.JSONObject;
 
-import com.skp.logmetric.input.kafka.ConfigInputKafka;
 import com.skp.logmetric.output.ConfigOutputFile;
 import com.skp.logmetric.output.kafka.ConfigOutputKafka;
 

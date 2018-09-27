@@ -7,7 +7,6 @@ import org.json.JSONObject;
 import com.skp.logmetric.config.ConfigValue;
 import com.skp.util.CommonHelper;
 
-import lombok.Data;
 import lombok.Getter;
 
 @Getter

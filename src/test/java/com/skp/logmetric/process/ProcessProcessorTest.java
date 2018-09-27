@@ -2,16 +2,8 @@ package com.skp.logmetric.process;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.MockConsumer;
-import org.apache.kafka.clients.consumer.OffsetResetStrategy;
-import org.apache.kafka.common.TopicPartition;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.simple.parser.ParseException;
@@ -20,12 +12,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.skp.logmetric.GeneralConsumerTest;
 import com.skp.logmetric.config.Config;
 import com.skp.logmetric.event.LogEvent;
-import com.skp.logmetric.input.InputProcessor;
-import com.skp.logmetric.input.kafka.GeneralConsumer;
-import com.skp.logmetric.input.kafka.GeneralConsumer.ConsumerCallback;
 import com.skp.logmetric.process.ProcessProcessor;
 import com.skp.logmetric.process.ProcessMetricsService;
 import com.skp.util.FileHelper;
@@ -73,8 +61,7 @@ public class ProcessProcessorTest {
 	@Test
 	public void testSampleJson() throws IOException, ParseException {
 		// Get config
-		String input = FileHelper.getFile("process-nxlog.conf");
-		Config config = Config.create(input);
+		Config config = Config.createFromResource("process-nxlog.conf", "regex.conf");
 		
 		// Create ProcessProcessor
 	    ProcessProcessor pprocess = new ProcessProcessor(config);
@@ -96,7 +83,7 @@ public class ProcessProcessorTest {
 	static long offset;
 	public static void generateSampleJson() {
 	    offset = 0;
-		FileHelper.processFile("access.log", new LineReadCallback() {
+		FileHelper.processFileFromResource("access.log", new LineReadCallback() {
 			@Override
 			public void processLine(String line) {
 				try {
@@ -136,8 +123,7 @@ public class ProcessProcessorTest {
 	@Test
 	public void testFilebeatJson() throws IOException, ParseException {
 		// Get config
-		String input = FileHelper.getFile("process-filebeat.conf");
-		Config config = Config.create(input);
+		Config config = Config.createFromResource("process-filebeat.conf", "regex.conf");
 		
 		// Create ProcessProcessor
 	    ProcessProcessor pprocess = new ProcessProcessor(config);
@@ -158,7 +144,7 @@ public class ProcessProcessorTest {
 
 	private void generateFilebeatJson() {
 	    offset = 0;
-		FileHelper.processFile("access.log", new LineReadCallback() {
+		FileHelper.processFileFromResource("access.log", new LineReadCallback() {
 			@Override
 			public void processLine(String line) {
 				try {

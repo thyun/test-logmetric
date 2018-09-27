@@ -1,10 +1,6 @@
 package com.skp.logmetric;
 
 import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -17,7 +13,6 @@ import com.skp.logmetric.input.InputProcessor;
 import com.skp.logmetric.output.OutputProcessor;
 import com.skp.logmetric.process.ProcessMetricsService;
 import com.skp.logmetric.process.ProcessProcessor;
-import com.skp.util.FileHelper;
 
 @SpringBootApplication
 public class MainApplication {
@@ -42,13 +37,14 @@ public class MainApplication {
 		logger.debug("processConf=" + ConfigPath.getProcessConf());
 		logger.debug("regexConf=" + ConfigPath.getRegexConf());
 		
+		// Get config
+		config = Config.create();
+		if (config == null)
+			exitWithHelp();
+		
 		// Get spring context
 		ctx = SpringApplication.run(MainApplication.class, args);
 		printSpringBeans();
-		
-		// Get config
-		String input = FileHelper.getFile(ConfigPath.getProcessConf());
-		config = Config.create(input);
 		
 		// Start
 		startOutput();
@@ -66,9 +62,10 @@ public class MainApplication {
           });
 	}
 
-	private void printHelp() {
+	private void exitWithHelp() {
 		System.out.println("Usage:");
 		System.out.println("java -jar logmetric.jar {process.conf} {regex.conf}");
+		System.exit(1);
 	}
 
 	private void startInput() {

@@ -10,22 +10,17 @@ import java.util.stream.Collectors;
 import com.skp.logmetric.event.KeyValue;
 import com.skp.util.FileHelper;
 
-import lombok.Data;
 import lombok.Getter;
 
 @Getter
 public class ConfigRegex extends HashMap<String, String> {
 	private static final long serialVersionUID = 1L;
 	public final static String DELIMITER = "=";
-	private static ConfigRegex instance = null;
-	
-	public static ConfigRegex getInstance() {
-		if (instance == null) {
-			instance = create(FileHelper.getFileLineList(ConfigPath.regexConf));
-		}
-		return instance;
-	}
 
+	public static ConfigRegex create() {
+		return create(FileHelper.getFileLineListFromPath(ConfigPath.regexConf));
+	}
+	
 	public static ConfigRegex create(List<String> lineList) {
 		Map<String, String> map = lineList.stream()
 		.filter(line -> {

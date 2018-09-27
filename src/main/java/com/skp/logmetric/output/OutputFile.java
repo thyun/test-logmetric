@@ -11,8 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.skp.logmetric.event.LogEvent;
-import com.skp.logmetric.process.ProcessQueue;
-
 import lombok.Data;
 
 @Data
@@ -41,9 +39,9 @@ public class OutputFile implements OutputPlugin {
 				process(config, e);
 			writer.flush();
 		} catch (InterruptedException ex) {
-			ex.printStackTrace();
+			logger.error("Error", ex);
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			logger.error("Error", ex);
 		}
 	}
 
@@ -53,8 +51,7 @@ public class OutputFile implements OutputPlugin {
 			writer.write(e.toString());
 			writer.write("\n");
 		} catch (IOException ex) {
-			// TODO Auto-generated catch block
-			ex.printStackTrace();
+			logger.error("Error", ex);
 		}
 	}
 
@@ -66,8 +63,7 @@ public class OutputFile implements OutputPlugin {
         try {
 			writer = new BufferedWriter(new FileWriter(config.getPath(), true));
 		} catch (IOException ex) {
-			// TODO Auto-generated catch block
-			ex.printStackTrace();
+			logger.error("Error", ex);
 		}
 	}
 

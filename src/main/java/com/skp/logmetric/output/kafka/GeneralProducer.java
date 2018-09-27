@@ -1,6 +1,5 @@
 package com.skp.logmetric.output.kafka;
 
-import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 

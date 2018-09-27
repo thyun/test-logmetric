@@ -48,9 +48,8 @@ public class OutputProcessor {
 		for (OutputPlugin op: outputPluginList) {
 			try {
 				op.getOutputQueue().put(elist);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (InterruptedException ex) {
+				logger.error("Error", ex);
 			}
 		}
 	}

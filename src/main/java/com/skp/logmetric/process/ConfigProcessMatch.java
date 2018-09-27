@@ -8,9 +8,8 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.skp.logmetric.config.Config;
 import com.skp.logmetric.config.ConfigItem;
-import com.skp.logmetric.config.ConfigRegex;
-
 import lombok.Data;
 
 @Data
@@ -31,7 +30,7 @@ public class ConfigProcessMatch implements ConfigItem {
 		type = (String) j.get("type");
 		field = (String) j.get("field");
 		String s = (String) j.get("pattern");
-		pattern = ConfigRegex.getInstance().getValueWithRaw(s);
+		pattern = Config.getConfigRegex().getValueWithRaw(s);
 	}
 
 	public void prepare() {

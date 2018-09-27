@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,11 +25,13 @@ public class FileHelper {
 	}
 	
 	public static String getFileFromPath(String relativePath) {
-		return null;
+		InputStream is = getInputStreamFromPath(relativePath);
+		return readInputStream(is);
 	}
 	
 	public static String getFileFromResource(String relativePath) {
-		return null;
+		InputStream is = getInputStreamFromResource(relativePath);
+		return readInputStream(is);
 	}
 	
     public static InputStream getInputStream(String relativePath) {                                  
@@ -46,9 +50,32 @@ public class FileHelper {
         inputStream = FileHelper.class.getClassLoader().getResourceAsStream(relativePath);       
 //        	logger.debug("getConfigInputStream config from resource: " + file);          
         return inputStream;                                                              
-    }            
+    }
     
-    public static String readInputStream(InputStream is) {                
+    public static InputStream getInputStreamFromPath(String relativePath) {                                  
+        String workDir = System.getProperty("user.dir");                                 
+        String path = workDir + "/" + relativePath;                                              
+        InputStream inputStream = null;
+        
+        try {                                                                            
+            inputStream = new FileInputStream(new File(path));                           
+            return inputStream;                                                          
+        } catch (FileNotFoundException e) {                                              
+        	inputStream = null;
+        }                                                                                
+        return inputStream;                                                              
+    }
+    
+    public static InputStream getInputStreamFromResource(String relativePath) {
+    	InputStream inputStream = null;
+        inputStream = FileHelper.class.getClassLoader().getResourceAsStream(relativePath);       
+        return inputStream;                                                              
+    }
+    
+    public static String readInputStream(InputStream is) {
+    	if (is == null)
+    		return null;
+    	
         StringBuilder textBuilder = new StringBuilder();                   
         try {                                                              
             Reader reader = new BufferedReader(new InputStreamReader(is)); 
@@ -62,8 +89,8 @@ public class FileHelper {
         return textBuilder.toString();                                     
     }
     
-    // line-by-line callback
-    public static void processFile(String relativePath, LineReadCallback callback) {   
+    // Process by line-by-line callback
+    public static void processFileFromResource(String relativePath, LineReadCallback callback) {   
     	InputStream is = getInputStream(relativePath);
         try {                                                              
             BufferedReader reader = new BufferedReader(new InputStreamReader(is)); 
@@ -94,5 +121,41 @@ public class FileHelper {
             logger.error(e.toString());                                           
         }
     	return lineList;
+	}
+	
+	public static List<String> getFileLineListFromPath(String relativePath) {
+    	InputStream is = getInputStreamFromPath(relativePath);
+    	ArrayList<String> lineList = new ArrayList<>();
+    	
+    	try {                                                              
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is)); 
+            String line;    
+            while ((line = reader.readLine()) != null) {
+                lineList.add(line);
+            }                                                              
+        } catch (IOException e) {                                          
+            logger.error(e.toString());                                           
+        }
+    	return lineList;
+	}
+	
+	public static List<String> getFileLineListFromResource(String relativePath) {
+    	InputStream is = getInputStreamFromResource(relativePath);
+    	ArrayList<String> lineList = new ArrayList<>();
+    	
+    	try {                                                              
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is)); 
+            String line;    
+            while ((line = reader.readLine()) != null) {
+                lineList.add(line);
+            }                                                              
+        } catch (IOException e) {                                          
+            logger.error(e.toString());                                           
+        }
+    	return lineList;
+	}
+
+	public static boolean exist(String path) {
+		return (Files.exists(Paths.get(path)));
 	}
 }

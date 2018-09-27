@@ -10,14 +10,14 @@ import com.skp.util.FileHelper.LineReadCallback;
 public class ResourceHelperTest {
 	
 	@Test
-	public void testGetResource() throws IOException {
-		String log = FileHelper.getFile("access.log");
+	public void testGetFileFromResource() throws IOException {
+		String log = FileHelper.getFileFromResource("access.log");
 		System.out.println("access.log=" + log);
 	}
 	
 	@Test
-	public void testProcessResource() throws IOException {
-		FileHelper.processFile("access.log", new LineReadCallback() {
+	public void testProcessFileFromResource() throws IOException {
+		FileHelper.processFileFromResource("access.log", new LineReadCallback() {
 			@Override
 			public void processLine(String line) {
 				System.out.println("line=" + line);

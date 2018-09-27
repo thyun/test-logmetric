@@ -1,28 +1,64 @@
 package com.skp.logmetric.config;
 
+import java.util.List;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
-import lombok.Data;
+import com.skp.util.FileHelper;
 
-@Data
+import lombok.Getter;
+
+@Getter
 public class Config {
+	static ConfigRegex configRegex = null;
 	ConfigInput configInput;
 	ConfigProcess configProcess;
 	ConfigOutput configOutput;
 	
-	public static Config create(String value) {
+	public static ConfigRegex getConfigRegex() {
+		return configRegex;
+	}
+	
+	public static Config create() {
+		if (!check(ConfigPath.getProcessConf(), ConfigPath.getRegexConf()))
+			return null;
+		String processConfStr = FileHelper.getFileFromPath(ConfigPath.getProcessConf());
+		List<String> regexConfStrList = FileHelper.getFileLineListFromPath(ConfigPath.getRegexConf());
+		configRegex = ConfigRegex.create(regexConfStrList);
+		
 		Config config = new Config();
-		config.init(value);
+		config.init(processConfStr);
 		config.prepare();
+		
 		return config;
 	}
 	
-	public static Config create(String resourceString, ConfigRegex configRegex) {
-		// TODO Auto-generated method stub
-		return null;
+	private static boolean check(String processConfPath, String regexConfPath) {
+		if (!FileHelper.exist(processConfPath) || !FileHelper.exist(regexConfPath))
+			return false;
+		return true;
+	}
+	
+	// For test
+	public static Config createFromResource(String processConfPath, String regexConfPath) {
+		if (!checkFromResource(processConfPath, regexConfPath))
+			return null;
+		String processConfStr = FileHelper.getFileFromResource(processConfPath);
+		List<String> regexConfStrList = FileHelper.getFileLineListFromResource(regexConfPath);
+		configRegex = ConfigRegex.create(regexConfStrList);
+		
+		Config config = new Config();
+		config.init(processConfStr);
+		config.prepare();
+		
+		return config;
+	}
+	
+	private static boolean checkFromResource(String processConfPath, String regexConfPath) {
+		if (FileHelper.getFileFromResource(processConfPath) == null || FileHelper.getFileFromResource(regexConfPath) == null)
+			return false;
+		return true;
 	}
 	
 	private void init(String value) {

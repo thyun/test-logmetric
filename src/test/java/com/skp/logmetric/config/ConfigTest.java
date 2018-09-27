@@ -27,10 +27,10 @@ public class ConfigTest {
 	// patternRegex=(\S+) (\S+) (\S+) \[(.+?)\] "(\S+) (\S+) (\S+)" (\d+) (\d+) "(.*?)" "(.*?)" "([\d\.]+)"(?:$|\s.*)
 	@Test
 	public void testConfig() throws IOException {
-		ConfigRegex configRegex = ConfigRegex.create(FileHelper.getFileLineList("regex.conf"));
+		ConfigRegex configRegex = ConfigRegex.create(FileHelper.getFileLineListFromResource("regex.conf"));
 		logger.debug("confRegex=" + configRegex);
 		
-		Config config = Config.create(FileHelper.getFile("process-nxlog.conf"));
+		Config config = Config.createFromResource("process-nxlog.conf", "regex.conf");
 		List<ConfigItem> configInputList = config.getConfigInput().getConfigInputList();
 		logger.debug("configInputList=" + configInputList);
 		

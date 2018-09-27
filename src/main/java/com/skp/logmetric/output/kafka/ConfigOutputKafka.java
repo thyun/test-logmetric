@@ -25,7 +25,6 @@ public class ConfigOutputKafka implements ConfigItem {
 
 	@Override
 	public void prepare() {
-		// TODO Auto-generated method stub
 
 	}
 

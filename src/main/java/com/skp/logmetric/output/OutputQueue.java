@@ -2,16 +2,15 @@ package com.skp.logmetric.output;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.skp.logmetric.event.LogEvent;
 
-import lombok.Data;
 import lombok.Getter;
 
 @Getter
 public class OutputQueue extends LinkedBlockingQueue<List<LogEvent>> {
+	private static final long serialVersionUID = 6823425662221263924L;
 	final static int QUEUE_SIZE = 1000;
 	
 	public OutputQueue() {

@@ -1,10 +1,7 @@
 package com.skp.logmetric.datastore;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.json.JSONObject;
 
 import com.skp.logmetric.event.MetricEvent;
 import com.skp.util.CommonHelper;

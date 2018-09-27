@@ -6,12 +6,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.errors.WakeupException;
-import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +13,6 @@ import com.skp.logmetric.config.Config;
 import com.skp.logmetric.config.ConfigProcess;
 import com.skp.logmetric.config.ConfigItem;
 import com.skp.logmetric.event.LogEvent;
-import com.skp.logmetric.input.kafka.GeneralConsumer;
 import com.skp.logmetric.output.OutputProcessor;
 
 import lombok.Data;
@@ -68,8 +61,8 @@ public class ProcessProcessor {
 		executor.shutdown();
 		try {
             executor.awaitTermination(5000, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (InterruptedException ex) {
+        	logger.error("Error", ex);
         }
 	}
 
@@ -82,8 +75,8 @@ public class ProcessProcessor {
 				if (out != null)
 					outList.add(out);
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception ex) {
+			logger.error("Error", ex);
 		}
 		
 		if (outputProcessor != null && outList.size() > 0)

@@ -25,7 +25,6 @@ public class ConfigOutputFile implements ConfigItem {
 
 	@Override
 	public void prepare() {
-		// TODO Auto-generated method stub
 
 	}
 

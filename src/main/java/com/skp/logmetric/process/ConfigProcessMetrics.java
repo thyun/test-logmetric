@@ -2,7 +2,6 @@ package com.skp.logmetric.process;
 
 import java.util.List;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.skp.logmetric.config.ConfigItem;

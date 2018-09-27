@@ -18,10 +18,8 @@ public class ProcessMetrics {
 	
 	public boolean process(ConfigProcessMetrics config, LogEvent e) {
 		ConfigValue cv = e.getConfigValue(config.getKey());
-		String tkey = cv.getTargetField();
-		String tvalue = cv.getTargetValueString();
-/*		String tkey = config.getKey();		// Target key (ex) host
-		String tvalue = e.getString(tkey);	// Target value (ex) 127.0.0.1 */
+		String tkey = cv.getTargetField();		// Target key (ex) host
+		String tvalue = cv.getTargetValueString();	// Target value (ex) 127.0.0.1
 		Date ttimestamp = getMetricTimestamp(e.getTimestamp());	// Target timestamp
 		
 		logger.debug("ProcessMetrics.process(): tkey=" + tkey + ", tvalue=" + tvalue + ", ttimestamp=" + CommonHelper.timestamp2Str(ttimestamp));
@@ -48,14 +46,6 @@ public class ProcessMetrics {
 		cal.set(Calendar.SECOND, 0);
 		cal.set(Calendar.MILLISECOND, 0);
 		return cal.getTime();
-	}
-
-	private String getLastKey(String tkey, Date ttimestamp) {
-		return tkey + "-" + CommonHelper.timestamp2Str(ttimestamp);
-	}
-
-	private String getLastValue(String tvalue, Date ttimestamp) {
-		return tvalue + "-" + CommonHelper.timestamp2Str(ttimestamp);
 	}
 
 }
