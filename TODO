@@ -1,7 +1,7 @@
 TODO
+- Fix SLF4J multiple bindings
 - Stream support
 - LogType support
-- Metrics: range support
 - Metrics: Multiple key support(host & instance ...)
 - Metrics: String value support?
 

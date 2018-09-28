@@ -9,23 +9,25 @@ import org.json.JSONObject;
 import lombok.Getter;
 
 @Getter
-public class ConfigAddField {
+public class CommonAddField {
 	public static String NAME = "add_field"; 
 	String field;
 	String value;
 	
-	public ConfigAddField(String field, String value) {
+	public CommonAddField(String field, String value) {
 		super();
 		this.field = field;
 		this.value = value;
 	}
 
-	public static List<ConfigAddField> jsonarray2List(JSONArray jsonArray) {
-		ArrayList<ConfigAddField> r = new ArrayList<>();
+	public static List<CommonAddField> jsonarray2List(JSONArray jsonArray) {
+		ArrayList<CommonAddField> r = new ArrayList<>();
+		if (jsonArray == null)
+			return r;
 		for (int i=0; i<jsonArray.length(); i++) {
 			JSONObject jo = (JSONObject) jsonArray.get(i);
 			
-			r.add(new ConfigAddField(jo.getString("field"), jo.getString("value")));
+			r.add(new CommonAddField(jo.getString("field"), jo.getString("value")));
 		}
 		return r;
 	}

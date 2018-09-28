@@ -25,8 +25,10 @@ public class CommonHelper {
 		return sw.toString();
 	}
 
-	public static List<String> jsonarray2List(JSONArray jsonArray) {
+	public static List<String> jsonarray2StringList(JSONArray jsonArray) {
 		ArrayList<String> r = new ArrayList<>();
+		if (jsonArray == null)
+			return r;
 		for (int i=0; i<jsonArray.length(); i++) {
 			r.add(jsonArray.getString(i));
 		}

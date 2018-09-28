@@ -24,18 +24,22 @@ public class MainApplication {
 	OutputProcessor oprocessor;
 		
 	public static void main(String[] args) {        
-		logger.info("Start");
+		logger.info("Start logmetric");
 		MainApplication main = new MainApplication();
 		main.start(args);
 	}
 
 	private void start(String[] args) {
+		String processConfPath=null;
+		String regexConfPath=null;
 		if (args.length > 0)
-			ConfigPath.setProcessConf(args[0]);
+			processConfPath = args[0];
 		if (args.length > 1)
-			ConfigPath.setRegexConf(args[1]);
-		logger.debug("processConf=" + ConfigPath.getProcessConf());
-		logger.debug("regexConf=" + ConfigPath.getRegexConf());
+			regexConfPath = args[1];
+		if (!ConfigPath.lookup(processConfPath, regexConfPath))
+			exitWithHelp();
+		logger.debug("processConfPath=" + ConfigPath.getProcessConfPath());
+		logger.debug("regexConfPath=" + ConfigPath.getRegexConfPath());
 		
 		// Get config
 		config = Config.create();

@@ -21,10 +21,10 @@ public class Config {
 	}
 	
 	public static Config create() {
-		if (!check(ConfigPath.getProcessConf(), ConfigPath.getRegexConf()))
+		if (!check(ConfigPath.getProcessConfPath(), ConfigPath.getRegexConfPath()))
 			return null;
-		String processConfStr = FileHelper.getFileFromPath(ConfigPath.getProcessConf());
-		List<String> regexConfStrList = FileHelper.getFileLineListFromPath(ConfigPath.getRegexConf());
+		String processConfStr = FileHelper.getFileFromPath(ConfigPath.getProcessConfPath());
+		List<String> regexConfStrList = FileHelper.getFileLineListFromPath(ConfigPath.getRegexConfPath());
 		configRegex = ConfigRegex.create(regexConfStrList);
 		
 		Config config = new Config();

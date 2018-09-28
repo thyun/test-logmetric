@@ -6,20 +6,20 @@ import lombok.Data;
 
 @Data
 public class MetricValueStats {
-	String key;
+	String value;
 	long count=0;
 	
 	public MetricValueStats(String key) {
-		this.key = key;
+		this.value = key;
 	}
 
 	public void apply() {
 		count++;
 	}
 
-	// "responseCode.200.count" : 10
-	public void export(String meter, JSONObject j) {
-		j.put(meter + MetricFieldStats.DELIMITER + key, count);
+	// "responseCode.200" : 10
+	public void export(String field, JSONObject j) {
+		j.put(field + MetricMeterStats.DELIMITER + value, count);
 		
 	}
 

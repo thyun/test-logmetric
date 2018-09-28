@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import lombok.Data;
 
 @Data
-public class MetricFieldStats {
+public class MetricMeterStats {
 	public final static String DELIMITER = ".";
 
 	String meter;
@@ -20,38 +20,38 @@ public class MetricFieldStats {
 	Double dmax = Double.MIN_VALUE;
 	HashMap<String, MetricValueStats> metricValueStatsHashMap = new HashMap<>();
 
-	public MetricFieldStats(String meter, Object firstValue) {
+	public MetricMeterStats(String meter, Object value) {
 		this.meter = meter;
-		this.firstValue = firstValue;
+		this.firstValue = value;
 	}
 
-	public void apply(Long o) {
+	public void applyMeter(Long o) {
 		lsum += o;
 		if (o < lmin)
 			lmin = o;
 		if (o > lmax)
 			lmax = o;
 		
-		MetricValueStats valueStats = getValueStats(o.toString());
+		MetricValueStats valueStats = getMetricValueStats(o.toString());
 		valueStats.apply();
 	}
 	
-	public void apply(Double o) {
+	public void applyMeter(Double o) {
 		dsum += o;
 		if (o < dmin)
 			dmin = o;
 		if (o > lmax)
 			dmax = o;
 		
-		MetricValueStats valueStats = getValueStats(o.toString());
+		MetricValueStats valueStats = getMetricValueStats(o.toString());
 		valueStats.apply();
 	}
 	
-	public void apply(String o) {
-		// Not defiend yet
+	public void applyMeter(String o) {
+		// Not defined yet
 	}
 
-	private MetricValueStats getValueStats(String key) {
+	private MetricValueStats getMetricValueStats(String key) {
 		MetricValueStats valueStats = metricValueStatsHashMap.get(key);
 		if (valueStats == null) {
 			valueStats = new MetricValueStats(key);

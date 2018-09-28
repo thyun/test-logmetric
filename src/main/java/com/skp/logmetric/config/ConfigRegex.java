@@ -18,7 +18,7 @@ public class ConfigRegex extends HashMap<String, String> {
 	public final static String DELIMITER = "=";
 
 	public static ConfigRegex create() {
-		return create(FileHelper.getFileLineListFromPath(ConfigPath.regexConf));
+		return create(FileHelper.getFileLineListFromPath(ConfigPath.regexConfPath));
 	}
 	
 	public static ConfigRegex create(List<String> lineList) {

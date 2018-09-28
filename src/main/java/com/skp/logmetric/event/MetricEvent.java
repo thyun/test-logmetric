@@ -8,6 +8,8 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.skp.logmetric.process.ConfigProcessMetrics.MeterRange;
+
 import lombok.Getter;
 
 @Getter
@@ -16,7 +18,8 @@ public class MetricEvent extends LogEvent {
 	Date createTime;
 	Date updateTime;
 	int sampling;
-	HashMap<String, MetricFieldStats> metricFieldStatsHashMap = new HashMap<>();
+	HashMap<String, MetricMeterStats> metricMeterStatsHashMap = new HashMap<>();
+	HashMap<String, MetricMeterRangeStats> metricMeterRangeStatsHashMap = new HashMap<>();
 	
 	public MetricEvent(String lkey) {
 		super();
@@ -29,29 +32,52 @@ public class MetricEvent extends LogEvent {
 		updateTime = new Date();
 	}
 
-	public void stats(String meter, Long o) {
-		MetricFieldStats ms = getMetricStats(meter, o);
-		ms.apply(o);
+	public void statsMeter(String meter, Long o) {
+		MetricMeterStats ms = getMetricMeterStats(meter, o);
+		ms.applyMeter(o);
 	}
 
-	public void stats(String meter, Double o) {
-		MetricFieldStats ms = getMetricStats(meter, o);
-		ms.apply(o);
+	public void statsMeter(String meter, Double o) {
+		MetricMeterStats ms = getMetricMeterStats(meter, o);
+		ms.applyMeter(o);
 		
 	}
 
-	public void stats(String meter, String o) {
-		MetricFieldStats ms = getMetricStats(meter, o);
-		ms.apply(o);
+	public void statsMeter(String meter, String o) {
+		MetricMeterStats ms = getMetricMeterStats(meter, o);
+		ms.applyMeter(o);
 	}
-
-	private MetricFieldStats getMetricStats(String meter, Object value) {
-		MetricFieldStats ms = metricFieldStatsHashMap.get(meter);
+	
+	private MetricMeterStats getMetricMeterStats(String meter, Object value) {
+		MetricMeterStats ms = metricMeterStatsHashMap.get(meter);
 		if (ms == null) {
-			ms = new MetricFieldStats(meter, value);
-			metricFieldStatsHashMap.put(meter, ms);
+			ms = new MetricMeterStats(meter, value);
+			metricMeterStatsHashMap.put(meter, ms);
 		}
 		return ms;
+	}
+
+	
+	public void statsMeterRange(MeterRange mr, Long o) {
+		getMetricMeterRangeStats(mr, o).applyMeterRange(o);
+	}
+
+	public void statsMeterRange(MeterRange mr, Double o) {
+		getMetricMeterRangeStats(mr, o).applyMeterRange(o);
+	}
+
+	public void statsMeterRange(MeterRange mr, String o) {
+		getMetricMeterRangeStats(mr, o).applyMeterRange(o);
+	}
+
+	private MetricMeterRangeStats getMetricMeterRangeStats(MeterRange mr, Object value) {
+		String field = mr.getField();
+		MetricMeterRangeStats stats = metricMeterRangeStatsHashMap.get(field);
+		if (stats == null) {
+			stats = new MetricMeterRangeStats(field, mr.getUnit(), value);
+			metricMeterRangeStatsHashMap.put(field, stats);
+		}
+		return stats;
 	}
 	
 	static String SAMPLING_COUNT = "count";
@@ -65,11 +91,10 @@ public class MetricEvent extends LogEvent {
 			j.put(key, this.get(key));
 		}
 		
-		for (MetricFieldStats ms: metricFieldStatsHashMap.values()) {
-			ms.export(j);
-//			sb.append(" ");
-//			sb.append(ms.toString());
-		}
+		for (MetricMeterStats stats: metricMeterStatsHashMap.values())
+			stats.export(j);
+		for (MetricMeterRangeStats stats: metricMeterRangeStatsHashMap.values()) 
+			stats.export(j);
 		
 		return j.toString();
 	}
@@ -80,22 +105,7 @@ public class MetricEvent extends LogEvent {
 	
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-//		sb.append("MetricEvent ");
 		sb.append(export());
-/*		
-//		sb.append(" key=" + this.getKey());
-		sb.append(" sampling=" + this.getSampling());
-		
-		Iterator<String> it = this.keys();
-		while (it.hasNext()) {
-			String key = it.next();
-			sb.append(" " + key + "=" + this.getString(key));
-		}
-		
-		for (MetricFieldStats ms: metricFieldStatsHashMap.values()) {
-			sb.append(" ");
-			sb.append(ms.toString());
-		} */
 		return sb.toString();
 	}
 
