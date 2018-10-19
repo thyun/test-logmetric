@@ -1,12 +1,12 @@
 TODO
 - Fix SLF4J multiple bindings
-- Stream support
+- Perf test
 - LogType support
 - Metrics: Multiple key support(host & instance ...)
 - Metrics: String value support?
 
 DONE
-- Output file sample
+- Output file support
 	"output": {
 		"type": "file",
 		"path": "output-process.log",
