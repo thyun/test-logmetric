@@ -12,9 +12,12 @@ import org.json.JSONArray;
 
 public class CommonHelper {
 	static SimpleDateFormat timestampFmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-
-	public static String timestamp2Str(Date timestamp) {
+	static {
 		timestampFmt.setTimeZone(TimeZone.getTimeZone("GMT"));
+	}
+
+	// SimpleDateFormat is not thread safe
+	public synchronized static String timestamp2Str(Date timestamp) {
         return timestampFmt.format(timestamp);
 	}
 	

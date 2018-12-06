@@ -1,4 +1,5 @@
 TODO
+- Metric output is not sorted
 - Fix SLF4J multiple bindings
 - Perf test
 - LogType support
@@ -7,6 +8,11 @@ TODO
 
 DONE
 - Output file support
+	"output": {
+		"type": "kafka",
+		"broker": "172.19.115.154:9092",
+		"topic": "view_log"
+	}
 	"output": {
 		"type": "file",
 		"path": "output-process.log",

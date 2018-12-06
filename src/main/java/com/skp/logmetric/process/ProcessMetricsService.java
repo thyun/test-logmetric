@@ -33,7 +33,7 @@ public class ProcessMetricsService {
 		ConcurrentHashMap<String, MetricEvent> hashMap = MetricEventDatastore.getInstance().getHashMap();
 		hashMap.forEach((key, me) -> {
 			if (me.afterCreateTime(duration)) {
-	      		logger.debug("Process metrics output: " + me.toString());
+//	      		logger.debug("Process metrics output: " + me.toString());
 	      		outList.add(me.toLogEvent());
 	      		hashMap.remove(key);
 	      	}
