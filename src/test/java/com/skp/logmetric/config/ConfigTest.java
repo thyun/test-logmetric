@@ -31,13 +31,14 @@ public class ConfigTest {
 		logger.debug("confRegex=" + configRegex);
 		
 		Config config = Config.createFromResource("process-nxlog.conf", "regex.conf");
-		List<ConfigItem> configInputList = config.getConfigInput().getConfigInputList();
-		logger.debug("configInputList=" + configInputList);
+//		List<ConfigItem> configInputList = config.getConfigInput().getConfigInputList();
+//		logger.debug("configInputList=" + configInputList);
 		
-		List<ConfigItem> configProcessList = config.getConfigProcess().getConfigProcessList();
-		ConfigProcessMatch configProcessMatch = (ConfigProcessMatch) configProcessList.get(0);
-		logger.debug("pattern=" + configProcessMatch.getPattern());
-		logger.debug("patternRegex=" + configProcessMatch.getPatternRegex());
+//		List<ConfigItem> configProcessList = config.getConfigProcess().getConfigProcessList();
+//		ConfigProcessMatch configProcessMatch = (ConfigProcessMatch) configProcessList.get(0);
+//		logger.debug("pattern=" + configProcessMatch.getPattern());
+//		logger.debug("patternRegex=" + configProcessMatch.getPatternRegex());
+		logger.debug("config=" + config);
 	}
 	
 	@Test
@@ -51,16 +52,5 @@ public class ConfigTest {
 		cv = ConfigValue.create(e, "%{[host][name]}");
 		logger.debug("cv=" + cv);
 	}
-	
-	@Test
-	public void testDate() throws ParseException {
-		String v = "31/Jul/2018:09:00:00";
-		String pattern = "dd/MMM/yyyy:HH:mm:ss";
-//		String v = "31/Jul/2018:09:00:00 +0900";
-//		String pattern = "dd/MMM/yyyy:HH:mm:ss Z";
-		SimpleDateFormat fmt = new SimpleDateFormat(pattern, Locale.ENGLISH);
-		
-		Date timestamp = fmt.parse(v);
-		logger.debug("timestamp=" + timestamp);
-	}
+
 }

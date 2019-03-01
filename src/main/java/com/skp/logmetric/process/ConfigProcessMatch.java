@@ -19,23 +19,27 @@ public class ConfigProcessMatch implements ConfigItem {
 	String type;
 	String field;
 	String pattern;
+	
+	String patternConverted;
 	String patternRegex;
 	ArrayList<TypeField> typeFieldList = new ArrayList<>();
 
-	public ConfigProcessMatch(JSONObject j) {
+/*	public ConfigProcessMatch(JSONObject j) {
 		init(j);
-	}
+	} */
 
-	public void init(JSONObject j) {		
+/*	public void init(JSONObject j) {		
 		type = (String) j.get("type");
 		field = (String) j.get("field");
 		String s = (String) j.get("pattern");
-		pattern = Config.getConfigRegex().getValueWithRaw(s);
-	}
+		patternConverted = Config.getConfigRegex().getValueWithRaw(s);
+	} */
 
 	public void prepare() {
+		patternConverted = Config.getConfigRegex().getValueWithRaw(pattern);
+		
 		Pattern p = Pattern.compile(TypeField.MATCH_REGEX);
-		Matcher m = p.matcher(pattern);
+		Matcher m = p.matcher(patternConverted);
 		StringBuffer sb = new StringBuffer();
 		int count=0;
 		while(m.find()) {

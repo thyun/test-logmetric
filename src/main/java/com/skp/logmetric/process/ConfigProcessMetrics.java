@@ -10,17 +10,18 @@ import com.skp.logmetric.config.CommonAddField;
 import com.skp.logmetric.config.ConfigItem;
 import com.skp.util.CommonHelper;
 
+import lombok.Data;
 import lombok.Getter;
 
-@Getter
+@Data
 public class ConfigProcessMetrics implements ConfigItem {
 	String type;
 	String key;
 	List<String> meter;
-	List<MeterRange> meterRange;
-	List<CommonAddField> addFieldList;
+	List<MeterRange> meter_range;
+	List<CommonAddField> add_field;
 	
-	@Getter
+/*	@Data
 	public class MeterRange {
 		String field;
 		long unit;
@@ -28,23 +29,23 @@ public class ConfigProcessMetrics implements ConfigItem {
 		public MeterRange(String field, long unit) {
 			this.field = field;
 			this.unit = unit;
-		}
+		} 
 
-	}
+	} */
 
-	public ConfigProcessMetrics(JSONObject j) {
+/*	public ConfigProcessMetrics(JSONObject j) {
 		super();
 		init(j);
-	}
+	} */
 
-	public void init(JSONObject j) {
+/*	public void init(JSONObject j) {
 		type = (String) j.get("type");
 		key = (String) j.get("key");
 		meter = CommonHelper.jsonarray2StringList(j.optJSONArray("meter"));
-		meterRange = jsonarray2MeterRangeList(j.optJSONArray("meter_range"));
+		meter_range = jsonarray2MeterRangeList(j.optJSONArray("meter_range"));
 		
-		addFieldList = CommonAddField.jsonarray2List(j.optJSONArray(CommonAddField.NAME));
-	}
+		add_field = CommonAddField.jsonarray2List(j.optJSONArray(CommonAddField.NAME));
+	} */
 
 	private List<MeterRange> jsonarray2MeterRangeList(JSONArray jsonArray) {
 		ArrayList<MeterRange> r = new ArrayList<>();
@@ -53,12 +54,14 @@ public class ConfigProcessMetrics implements ConfigItem {
 		for (int i=0; i<jsonArray.length(); i++) {
 			JSONObject jo = (JSONObject) jsonArray.get(i);
 			
-			r.add(new MeterRange(jo.getString("field"), jo.getLong("unit")));
+			MeterRange mr = new MeterRange();
+			mr.setField(jo.getString("field"));
+			mr.setUnit(jo.getLong("unit"));
+			r.add(mr);
 		}
 		return r;
 	}
 
-	public void prepare() {
-		
+	public void prepare() {		
 	}
 }

@@ -9,9 +9,10 @@ import org.slf4j.LoggerFactory;
 
 import com.skp.logmetric.config.ConfigItem;
 
+import lombok.Data;
 import lombok.Getter;
 
-@Getter
+@Data
 public class ConfigProcessDate implements ConfigItem {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -21,20 +22,21 @@ public class ConfigProcessDate implements ConfigItem {
 	SimpleDateFormat patternFmt;
 	String target;
 
-	public ConfigProcessDate(JSONObject j) {
+/*	public ConfigProcessDate(JSONObject j) {
 		init(j);
-	}
+	} */
 
-	public void init(JSONObject j) {		
+/*	public void init(JSONObject j) {		
 		type = (String) j.get("type");
 		field = (String) j.get("field");
 		pattern = (String) j.get("pattern");
 		target = (String) j.get("target");
 		
 		patternFmt = new SimpleDateFormat(pattern, Locale.ENGLISH);
-	}
+	} */
 
 	public void prepare() {
+		patternFmt = new SimpleDateFormat(pattern, Locale.ENGLISH);
 	}
 
 }

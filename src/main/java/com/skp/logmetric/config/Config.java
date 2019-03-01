@@ -1,20 +1,28 @@
 package com.skp.logmetric.config;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.skp.util.CommonHelper;
 import com.skp.util.FileHelper;
 
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+@Data
 public class Config {
+	private static final Logger logger = LoggerFactory.getLogger(Config.class);
+	static ObjectMapper objectMapper = new ObjectMapper();
+	
 	static ConfigRegex configRegex = null;
-	ConfigInput configInput;
-	ConfigProcess configProcess;
-	ConfigOutput configOutput;
+	
+	HashMap<String, Object> input;
+	List<HashMap<String, Object>> process;
+	HashMap<String, Object> output;
 	
 	public static ConfigRegex getConfigRegex() {
 		return configRegex;
@@ -27,11 +35,13 @@ public class Config {
 		List<String> regexConfStrList = FileHelper.getFileLineListFromPath(ConfigPath.getRegexConfPath());
 		configRegex = ConfigRegex.create(regexConfStrList);
 		
-		Config config = new Config();
-		config.init(processConfStr);
-		config.prepare();
-		
-		return config;
+		try {
+			Config config = objectMapper.readValue(processConfStr, Config.class);
+			return config;
+		} catch (IOException e) {	// JsonParseException, JsonMappingException or IOException
+			logger.error(CommonHelper.exception2Str(e));
+		}
+		return null;
 	}
 	
 	private static boolean check(String processConfPath, String regexConfPath) {
@@ -48,35 +58,19 @@ public class Config {
 		List<String> regexConfStrList = FileHelper.getFileLineListFromResource(regexConfPath);
 		configRegex = ConfigRegex.create(regexConfStrList);
 		
-		Config config = new Config();
-		config.init(processConfStr);
-		config.prepare();
-		
-		return config;
+		try {
+			Config config = objectMapper.readValue(processConfStr, Config.class);
+			return config;
+		} catch (IOException e) {	// JsonParseException, JsonMappingException or IOException
+			logger.error(CommonHelper.exception2Str(e));
+		}
+		return null;
 	}
 	
 	private static boolean checkFromResource(String processConfPath, String regexConfPath) {
 		if (FileHelper.getFileFromResource(processConfPath) == null || FileHelper.getFileFromResource(regexConfPath) == null)
 			return false;
 		return true;
-	}
-	
-	private void init(String value) {
-		JSONObject j = new JSONObject(value);
-//		j.put("pattern", "%{WORD:ip} %{WORD:identd} %{WORD:userid} \\[%{DATE:date}\\] \\\"%{WORD} %{WORD:request} %{WORD}\\\" %{LONG:responseCode} %{LONG:byteSent} \\\"%{DATA:referer}\\\" \\\"%{DATA:client}\\\" \\\"%{DOUBLE:responseTime}\\\"(?:$|\\s.*)");
-		init(j);
-	}
-
-	private void init(JSONObject j) {	
-		configInput = new ConfigInput((JSONObject) j.get("input"));
-		configProcess = new ConfigProcess((JSONArray) j.get("process"));
-		configOutput = new ConfigOutput((JSONObject) j.get("output"));
-	}
-
-	public void prepare() {
-		configInput.prepare();
-		configProcess.prepare();
-		configOutput.prepare();
 	}
 
 }

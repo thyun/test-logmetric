@@ -10,18 +10,19 @@ import lombok.Data;
 public class ConfigOutputFile implements ConfigItem {
 	String type;
 	String path;
+	long max;
 	
-	public ConfigOutputFile(JSONObject j) {
+/*	public ConfigOutputFile(JSONObject j) {
 		init(j);
-	}
+	} */
 
-	@Override
+/*	@Override
 	public void init(JSONObject j) {
 		type = (String) j.get("type");
 		path = (String) j.get("path");
 //		max = (String) j.get("max");
 
-	}
+	} */
 
 	@Override
 	public void prepare() {

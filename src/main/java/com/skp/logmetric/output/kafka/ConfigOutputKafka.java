@@ -12,16 +12,16 @@ public class ConfigOutputKafka implements ConfigItem {
 	String broker;
 	String topic;
 
-	public ConfigOutputKafka(JSONObject j) {
+/*	public ConfigOutputKafka(JSONObject j) {
 		init(j);
-	}
+	} */
 
-	@Override
+/*	@Override
 	public void init(JSONObject j) {
 		type = (String) j.get("type");
 		broker = (String) j.get("broker");
 		topic = (String) j.get("topic");
-	}
+	} */
 
 	@Override
 	public void prepare() {

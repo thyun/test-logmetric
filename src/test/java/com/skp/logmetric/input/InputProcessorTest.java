@@ -31,7 +31,6 @@ public class InputProcessorTest {
 	@Test
 	public void testInputKafka() throws IOException, ParseException, InterruptedException {
 		// Get config
-//		String input = FileHelper.getFile("process-nxlog.conf");
 		Config config = Config.createFromResource("process-nxlog.conf", "regex.conf");
 		
 	    // Create InputProcessor

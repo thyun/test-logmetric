@@ -13,7 +13,6 @@ import com.skp.logmetric.config.ConfigValue;
 import com.skp.logmetric.datastore.MetricEventDatastore;
 import com.skp.logmetric.event.LogEvent;
 import com.skp.logmetric.event.MetricEvent;
-import com.skp.logmetric.process.ConfigProcessMetrics.MeterRange;
 import com.skp.util.CommonHelper;
 
 public class ProcessMetrics {
@@ -51,7 +50,9 @@ public class ProcessMetrics {
 	}
 	
 	private void processMeterRange(ConfigProcessMetrics config, LogEvent e, MetricEvent me) {
-		for (MeterRange mr: config.getMeterRange()) {
+		if (config.getMeter_range() == null)
+			return;
+		for (MeterRange mr: config.getMeter_range()) {
 			if (!e.has(mr.getField()))
 				continue;
 			
@@ -67,7 +68,7 @@ public class ProcessMetrics {
 	}
 
 	private void processPost(ConfigProcessMetrics config, MetricEvent me) {
-		List<CommonAddField> clist = config.getAddFieldList();
+		List<CommonAddField> clist = config.getAdd_field();
 		for (CommonAddField c: clist) {
 			String tfield = c.getField();
 			String raw = c.getValue();

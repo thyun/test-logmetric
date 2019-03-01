@@ -8,7 +8,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.skp.logmetric.process.ConfigProcessMetrics.MeterRange;
+import com.skp.logmetric.process.MeterRange;
 
 import lombok.Getter;
 

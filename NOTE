@@ -1,6 +1,5 @@
 TODO
 - Metric output is not sorted
-- Fix SLF4J multiple bindings
 - Perf test
 - LogType support
 - Metrics: Multiple key support(host & instance ...)

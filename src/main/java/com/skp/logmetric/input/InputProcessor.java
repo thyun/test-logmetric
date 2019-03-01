@@ -1,11 +1,13 @@
 package com.skp.logmetric.input;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skp.logmetric.config.Config;
-import com.skp.logmetric.config.ConfigInput;
 import com.skp.logmetric.config.ConfigItem;
 import com.skp.logmetric.input.kafka.ConfigInputKafka;
 import com.skp.logmetric.input.kafka.InputKafka;
@@ -15,6 +17,7 @@ import lombok.Data;
 @Data
 public class InputProcessor {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	static ObjectMapper objectMapper = new ObjectMapper();
 	
 	private final Config config;
 	ArrayList<InputPlugin> inputPluginList = new ArrayList<>();
@@ -34,11 +37,6 @@ public class InputProcessor {
 		for (InputPlugin ip: inputPluginList) {
 			ip.start();
 		}
-//		int count = inputPluginList.size();
-//		executor = Executors.newFixedThreadPool(count);
-//		for (InputPlugin ip: inputPluginList) {
-//			executor.submit(ip);
-//		}
 	}
 	
 	public void stop() {
@@ -49,11 +47,11 @@ public class InputProcessor {
 	}
 
 	private void addPlugin() {
-		ConfigInput configInput = config.getConfigInput();
-		for (ConfigItem cp: configInput.getConfigInputList()) {
-			if (cp instanceof ConfigInputKafka) {
-				inputPluginList.add(new InputKafka((ConfigInputKafka) cp));
-			}
+		HashMap<String, Object> cinput = config.getInput();
+		String type = (String) cinput.get("type");
+		if (type.equals("kafka")) {
+			ConfigInputKafka cinputKafka = objectMapper.convertValue(cinput, ConfigInputKafka.class);
+			inputPluginList.add(new InputKafka(cinputKafka));
 		}
 	}
 

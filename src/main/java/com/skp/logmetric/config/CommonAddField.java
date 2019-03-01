@@ -6,19 +6,20 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import lombok.Data;
 import lombok.Getter;
 
-@Getter
+@Data
 public class CommonAddField {
 	public static String NAME = "add_field"; 
 	String field;
 	String value;
 	
-	public CommonAddField(String field, String value) {
+/*	public CommonAddField(String field, String value) {
 		super();
 		this.field = field;
 		this.value = value;
-	}
+	} */
 
 	public static List<CommonAddField> jsonarray2List(JSONArray jsonArray) {
 		ArrayList<CommonAddField> r = new ArrayList<>();
@@ -27,7 +28,10 @@ public class CommonAddField {
 		for (int i=0; i<jsonArray.length(); i++) {
 			JSONObject jo = (JSONObject) jsonArray.get(i);
 			
-			r.add(new CommonAddField(jo.getString("field"), jo.getString("value")));
+			CommonAddField addField = new CommonAddField();
+			addField.setField(jo.getString("field"));
+			addField.setValue(jo.getString("value"));
+			r.add(addField);
 		}
 		return r;
 	}

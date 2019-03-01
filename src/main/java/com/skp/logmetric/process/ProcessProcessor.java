@@ -1,6 +1,7 @@
 package com.skp.logmetric.process;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -9,8 +10,8 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skp.logmetric.config.Config;
-import com.skp.logmetric.config.ConfigProcess;
 import com.skp.logmetric.config.ConfigItem;
 import com.skp.logmetric.event.LogEvent;
 import com.skp.logmetric.output.OutputProcessor;
@@ -20,8 +21,11 @@ import lombok.Data;
 @Data
 public class ProcessProcessor {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	static ObjectMapper objectMapper = new ObjectMapper();
 	
 	private final Config config;
+	ArrayList<ConfigItem> cprocessList = new ArrayList<>();
+	
 	ProcessMatch processMatch = new ProcessMatch();
 	ProcessDate processDate = new ProcessDate();
 	ProcessMetrics processMetrics = new ProcessMetrics();
@@ -45,6 +49,23 @@ public class ProcessProcessor {
 	}
 	
 	public void init() {
+		for (HashMap<String, Object> cprocess: config.getProcess()) {
+			String type = (String) cprocess.get("type");
+			if (type.equals("match")) {
+				ConfigProcessMatch c = objectMapper.convertValue(cprocess, ConfigProcessMatch.class);
+				c.prepare();
+				cprocessList.add(c);
+			} else if (type.equals("date")) {
+				ConfigProcessDate c = objectMapper.convertValue(cprocess, ConfigProcessDate.class);
+				c.prepare();
+				cprocessList.add(c);
+			} else if (type.equals("metrics")) {
+				ConfigProcessMetrics c = objectMapper.convertValue(cprocess, ConfigProcessMetrics.class);
+				c.prepare();
+				cprocessList.add(c);
+			}
+		}
+		
 		int numConsumers = 1;
         executor = Executors.newFixedThreadPool(numConsumers);
         for (int i=0; i<numConsumers; i++) {
@@ -87,9 +108,9 @@ public class ProcessProcessor {
 		logger.debug("process() start");
 		LogEvent out=e;
 		
-		ConfigProcess configProcess = config.getConfigProcess();
-		List<ConfigItem> configProcessList = configProcess.getConfigProcessList();
-		for (ConfigItem item : configProcessList) {
+//		ConfigProcess configProcess = config.getConfigProcess();
+//		List<ConfigItem> configProcessList = configProcess.getConfigProcessList();
+		for (ConfigItem item : cprocessList) {
 			boolean r=true;
 			if (item instanceof ConfigProcessMatch)
 				r = processMatch.process((ConfigProcessMatch) item, e);
