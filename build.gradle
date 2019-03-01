@@ -1,6 +1,6 @@
 buildscript {
 	ext {
-		springBootVersion = '1.4.2.RELEASE'
+		springBootVersion = '2.0.0.RELEASE'
 	}
 	repositories {
 		mavenCentral()
@@ -13,6 +13,7 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
 
 jar {
 	baseName = 'logmetric'
@@ -31,10 +32,13 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter')
 	compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.boot:spring-boot-starter-actuator")
+    compile("org.jolokia:jolokia-core")
+    compile("org.json:json:20140107")
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.9.4'
 //    compile 'org.projectlombok:lombok:1.16.20'
 //    compile 'org.projectlombok:lombok:1.14.4'
-    compile("org.jolokia:jolokia-core")
-    compile("org.json:json")
+    compileOnly group: 'org.projectlombok', name: 'lombok'
+	annotationProcessor group: 'org.projectlombok', name: 'lombok'
     
     // https://mvnrepository.com/artifact/org.apache.kafka/kafka
 //    compile group: 'org.apache.kafka', name: 'kafka_2.10', version: '0.8.2.2'
@@ -45,6 +49,6 @@ dependencies {
 //    compile("org.apache.logging.log4j:log4j-core:2.7")
     
 	testCompile('org.springframework.boot:spring-boot-starter-test')
-	compileOnly 'org.projectlombok:lombok:1.16.20'
+//	compileOnly 'org.projectlombok:lombok:1.16.20'
 }
 
