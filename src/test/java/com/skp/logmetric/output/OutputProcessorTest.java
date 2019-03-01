@@ -1,23 +1,14 @@
 package com.skp.logmetric.output;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.json.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.skp.logmetric.config.Config;
-import com.skp.logmetric.event.LogEvent;
-import com.skp.util.FileHelper;
-import com.skp.util.FileHelper.LineReadCallback;
+import com.skp.logmetric.generator.OutputQueueGenerator;
 
 public class OutputProcessorTest {
-	private static final Logger logger = LoggerFactory.getLogger(OutputProcessorTest.class);
+//	private static final Logger logger = LoggerFactory.getLogger(OutputProcessorTest.class);
 	
 	@Before
 	public void setUp() {
@@ -37,12 +28,14 @@ public class OutputProcessorTest {
 	    OutputFile outputFile = (OutputFile) oprocess.getOutputPluginList().get(0);
 	    
 	    // Generate sample data
-	    generateSampleJson(outputFile.getOutputQueue());
+	    OutputQueueGenerator.generateSampleCnxlogJson("access.log", outputFile.getOutputQueue());
+//	    generateSampleJson(outputFile.getOutputQueue());
 	    
 	    // Process
 	    outputFile.process();
 	}
 
+	/*
 	static long offset;
 	public static void generateSampleJson(OutputQueue outputQueue) {
 	    offset = 0;
@@ -75,6 +68,6 @@ public class OutputProcessorTest {
 		j.put("sourceType", "pmon-accesslog");
 		j.put("log",  line);
 		return j.toString();
-	}
+	} */
 
 }

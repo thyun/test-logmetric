@@ -1,26 +1,16 @@
 package com.skp.logmetric.process;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.skp.logmetric.config.Config;
-import com.skp.logmetric.event.LogEvent;
+import com.skp.logmetric.generator.ProcessQueueGenerator;
 import com.skp.logmetric.process.ProcessProcessor;
 import com.skp.logmetric.process.ProcessMetricsService;
-import com.skp.util.FileHelper;
-import com.skp.util.FileHelper.LineReadCallback;
 
 public class ProcessProcessorTest {
-	private static final Logger logger = LoggerFactory.getLogger(ProcessProcessorTest.class);
+//	private static final Logger logger = LoggerFactory.getLogger(ProcessProcessorTest.class);
 	
 	@Before
 	public void setUp() {
@@ -68,7 +58,8 @@ public class ProcessProcessorTest {
 	    pprocess.init();
 		
 		// Generate sample log
-		generateSampleJson();
+	    ProcessQueueGenerator.generateSampleCnxlogJson("access.log");
+//		generateSampleJson();
 		
 		// Process
 		for (int i=0; i<200; i++)
@@ -78,42 +69,6 @@ public class ProcessProcessorTest {
 		ProcessMetricsService service = new ProcessMetricsService();
 	    service.export(0);
 	    service.export(0);
-	}
-	
-	static long offset;
-	public static void generateSampleJson() {
-	    offset = 0;
-		FileHelper.processFileFromResource("access.log", new LineReadCallback() {
-			@Override
-			public void processLine(String line) {
-				try {
-					List<LogEvent> elist1 = createLogEventList(produceSampleJson("web01", line));
-					List<LogEvent> elist2 = createLogEventList(produceSampleJson("web02", line));
-					ProcessQueue.getInstance().put(elist1);
-					ProcessQueue.getInstance().put(elist2);
-//					ProcessQueue.getInstance().put(createLogEvent(produceJson("web01", line)));
-//					ProcessQueue.getInstance().put(createLogEvent(produceJson("web02", line)));
-				} catch (InterruptedException e) {
-					logger.error(e.toString());
-				}
-			}
-		});
-	}
-	
-	protected static List<LogEvent> createLogEventList(String value) {
-		ArrayList<LogEvent> elist = new ArrayList<>();
-		elist.add(LogEvent.parse(value));
-		return elist;
-	}
-
-	private static String produceSampleJson(String host, String line) {
-		JSONObject j = new JSONObject();
-		j.put("host", host);
-		j.put("nxtime", 1536298656382L);
-		j.put("logInstance", "Anvil");
-		j.put("sourceType", "pmon-accesslog");
-		j.put("log",  line);
-		return j.toString();
 	}
 	
 	/*
@@ -130,7 +85,8 @@ public class ProcessProcessorTest {
 	    pprocess.init();
 		
 		// Generate sample log
-		generateFilebeatJson();
+	    ProcessQueueGenerator.generateSampleFilebeatJson("access.log");
+//		generateFilebeatJson();
 		
 		// Process
 		for (int i=0; i<200; i++)
@@ -140,41 +96,6 @@ public class ProcessProcessorTest {
 		ProcessMetricsService service = new ProcessMetricsService();
 	    service.export(0);
 	    service.export(0);
-	}
-
-	private void generateFilebeatJson() {
-	    offset = 0;
-		FileHelper.processFileFromResource("access.log", new LineReadCallback() {
-			@Override
-			public void processLine(String line) {
-				try {
-					List<LogEvent> elist1 = createLogEventList(produceFilebeatJson("web01", line));
-					List<LogEvent> elist2 = createLogEventList(produceFilebeatJson("web02", line));
-					ProcessQueue.getInstance().put(elist1);
-					ProcessQueue.getInstance().put(elist2);
-				} catch (InterruptedException e) {
-					logger.error(e.toString());
-				}
-			}
-		});
-	}
-
-	protected String produceFilebeatJson(String host, String line) {
-		JSONObject j = new JSONObject();
-		JSONArray jtags = new JSONArray();
-		jtags.put("beats_input_codec_plain_applied");
-		JSONObject jbeat = new JSONObject();
-		jbeat.put("version", "6.4.0");
-		jbeat.put("name", host);
-		jbeat.put("hostname", host);
-		JSONObject jhost = new JSONObject();
-		jhost.put("name", host);
-		
-		j.put("tags", jtags);
-		j.put("beat", jbeat);
-		j.put("message",  line);
-		j.put("host", jhost);
-		return j.toString();
 	}
 
 }

@@ -58,7 +58,6 @@ public class ConfigValue {
 		Pattern p = Pattern.compile(FIELDS_REGEX);
 		Matcher m = p.matcher(inner);
 		ArrayList<String> fields = new ArrayList<>();
-		StringBuffer sb = new StringBuffer();
 		int count=0;
 		while(m.find()) {
 	         count++;

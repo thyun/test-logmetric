@@ -3,14 +3,12 @@ package com.skp.logmetric.process;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.skp.logmetric.config.ConfigItem;
 
 import lombok.Data;
-import lombok.Getter;
 
 @Data
 public class ConfigProcessDate implements ConfigItem {

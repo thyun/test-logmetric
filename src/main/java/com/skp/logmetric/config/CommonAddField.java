@@ -7,7 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import lombok.Data;
-import lombok.Getter;
 
 @Data
 public class CommonAddField {

@@ -5,23 +5,23 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.MockConsumer;
 import org.apache.kafka.clients.consumer.OffsetResetStrategy;
 import org.json.simple.parser.ParseException;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.skp.logmetric.GeneralConsumerTest;
 import com.skp.logmetric.config.Config;
 import com.skp.logmetric.event.LogEvent;
 import com.skp.logmetric.input.kafka.GeneralConsumer;
 import com.skp.logmetric.input.kafka.InputKafka;
 import com.skp.logmetric.process.ProcessQueue;
+import com.skp.util.StreamFileHelper;
 
 public class InputProcessorTest {
-	private static final Logger logger = LoggerFactory.getLogger(InputProcessorTest.class);
+//	private static final Logger logger = LoggerFactory.getLogger(InputProcessorTest.class);
+	static 	    long offset = 0;
 	
 	@Before
 	public void setUp() {
@@ -47,7 +47,12 @@ public class InputProcessorTest {
 	    gconsumer.applyMockConsumer(mockConsumer, topic);
 	    
 	    // Generate sample data
-	    GeneralConsumerTest.generateSampleJson(mockConsumer, topic);
+	    StreamFileHelper.getFileFromResource("access.log")
+		.forEach(line -> {
+			mockConsumer.addRecord(new ConsumerRecord<String, String>(topic, 0,	offset++, "mykey", GeneralConsumerTest.produceJson("web01", line)));
+			mockConsumer.addRecord(new ConsumerRecord<String, String>(topic, 0,	offset++, "mykey", GeneralConsumerTest.produceJson("web02", line)));
+		});
+//	    GeneralConsumerTest.generateSampleJson(mockConsumer, topic);
 	    
 	    // Consume
 	    gconsumer.consume();

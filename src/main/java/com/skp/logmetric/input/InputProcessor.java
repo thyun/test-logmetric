@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skp.logmetric.config.Config;
-import com.skp.logmetric.config.ConfigItem;
 import com.skp.logmetric.input.kafka.ConfigInputKafka;
 import com.skp.logmetric.input.kafka.InputKafka;
 

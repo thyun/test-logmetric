@@ -8,15 +8,13 @@ import org.apache.kafka.clients.consumer.OffsetResetStrategy;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.skp.logmetric.input.kafka.GeneralConsumer;
 import com.skp.util.FileHelper;
+import com.skp.util.StreamFileHelper;
 import com.skp.util.FileHelper.LineReadCallback;
 
 public class GeneralConsumerTest {
-	private static final Logger logger = LoggerFactory.getLogger(GeneralConsumerTest.class);
+//	private static final Logger logger = LoggerFactory.getLogger(GeneralConsumerTest.class);
 	static String topic = "my_topic";
 //	MockConsumer<String, String> kafkaConsumer;
 	GeneralConsumer.ConsumerCallback callback = new GeneralConsumer.ConsumerCallback() {
@@ -103,7 +101,13 @@ public class GeneralConsumerTest {
 //	    runnableConsumer.assign(topic, Arrays.asList(0)); */
 
 	    // Create record
-	    generateSampleJson(mockConsumer, topic);
+	    offset = 0;
+	    StreamFileHelper.getFileFromResource("access.log")
+	    	.forEach(line -> {
+	    		mockConsumer.addRecord(new ConsumerRecord<String, String>(topic, 0,	offset++, "mykey", produceJson("web01", line)));
+	    		mockConsumer.addRecord(new ConsumerRecord<String, String>(topic, 0,	offset++, "mykey", produceJson("web02", line)));
+	    	});
+//	    generateSampleJson(mockConsumer, topic);
 
 	    // Consume
 	    gconsumer.consume();
@@ -121,7 +125,7 @@ public class GeneralConsumerTest {
 		});
 	}
 	
-	public static void generateSampleJson(MockConsumer<String, String> mockConsumer, String topic) {
+/*	public static void generateSampleJson(MockConsumer<String, String> mockConsumer, String topic) {
 	    offset = 0;
 		FileHelper.processFileFromResource("access.log", new LineReadCallback() {
 			@Override
@@ -132,7 +136,7 @@ public class GeneralConsumerTest {
 	    				offset++, "mykey", produceJson("web02", line)));
 			}
 		});
-	}
+	} */
 
 	public static String produceJson(String host, String line) {
 		JSONObject j = new JSONObject();

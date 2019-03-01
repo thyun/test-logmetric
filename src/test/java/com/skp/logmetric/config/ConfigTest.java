@@ -1,19 +1,12 @@
 package com.skp.logmetric.config;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.skp.logmetric.event.LogEvent;
-import com.skp.logmetric.process.ConfigProcessMatch;
 import com.skp.util.FileHelper;
 
 public class ConfigTest {

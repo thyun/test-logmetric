@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,17 +22,6 @@ public class ConfigProcessMatch implements ConfigItem {
 	String patternConverted;
 	String patternRegex;
 	ArrayList<TypeField> typeFieldList = new ArrayList<>();
-
-/*	public ConfigProcessMatch(JSONObject j) {
-		init(j);
-	} */
-
-/*	public void init(JSONObject j) {		
-		type = (String) j.get("type");
-		field = (String) j.get("field");
-		String s = (String) j.get("pattern");
-		patternConverted = Config.getConfigRegex().getValueWithRaw(s);
-	} */
 
 	public void prepare() {
 		patternConverted = Config.getConfigRegex().getValueWithRaw(pattern);
